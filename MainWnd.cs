@@ -6,7 +6,6 @@ using System.Diagnostics;
 using ApiCore;
 using ApiCore.Status;
 using ApiCore.Wall;
-using ApiCore.Friends;
 using iTunesLib;
 
 /*
