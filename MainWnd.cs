@@ -7,6 +7,7 @@ using ApiCore;
 using ApiCore.Status;
 using ApiCore.Wall;
 using iTunesLib;
+using Microsoft.Win32;
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
@@ -121,7 +122,7 @@ namespace iTunesSVKS
         private void MainWnd_Shown(object sender, EventArgs e)
         {
             Text = AppTitle + ": Не авторизован!";
-            Reauth();
+            checkInstall();
         }
 
 
@@ -531,5 +532,47 @@ namespace iTunesSVKS
             WindowState = FormWindowState.Normal;
         }
 
+        private void checkInstall()
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\iTunesSVKS");
+
+            try
+            {
+                object value = key.GetValue("Installed");
+                string valueS = value.ToString();
+                if (valueS == "1")
+                {
+                    Reauth();
+                }
+                else
+                {
+                  DialogResult result = MessageBox.Show(
+                        "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
+                        "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                    if (result == DialogResult.OK)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        Reauth();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                DialogResult result = MessageBox.Show(
+      "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
+      "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.OK)
+                {
+                    Application.Exit();
+                }
+                else
+                {
+                    Reauth();
+                }
+            }
+        }
     }
 }
