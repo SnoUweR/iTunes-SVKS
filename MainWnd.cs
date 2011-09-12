@@ -3,11 +3,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+//Подключаем VK API for .NET by xternalx
 using ApiCore;
 using ApiCore.Status;
 using ApiCore.Wall;
-using iTunesLib;
-using Microsoft.Win32;
+using iTunesLib; //Подключаем COM-библиотеку для работы с iTunes
+using Microsoft.Win32; //Подключаем библиотеку для работы с реестром
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
@@ -27,6 +28,7 @@ namespace iTunesSVKS
 {
     public partial class MainWnd : Form
     {
+        // Инициализация всех переменных
         private const string AppTitle = "iTunes SVKS";
 
         private SessionInfo _sessionInfo;
@@ -45,25 +47,33 @@ namespace iTunesSVKS
         private StatusFactory _statusFactory;
         private WallFactory _wallFactory;
 
+        
+        // Инициализация главного окна
         public MainWnd()
         {
             InitializeComponent();
         }
 
+        // Событие при нажатии на «Выход»
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        // Событие при закрытии программы
         protected override void OnClosing(CancelEventArgs e)
         {
             try
             {
-                string currentStatus = _statusFactory.Get(int.Parse(_sessionInfo.MemberId));
+                string currentStatus = _statusFactory.Get(int.Parse(_sessionInfo.MemberId)); //Берем текущий статус пользователя
+
+                // Проверяем, равен ли текущий статус первоначальному
                 if (currentStatus == _oldstatus)
                 {
-
+                    // Если да, то завершаем программу
                 }
+
+                // Если нет, то спрашиваем, вернуть ли первоначальный статус
                 else
                 {
                     _statusFactory.Set("");
@@ -71,12 +81,15 @@ namespace iTunesSVKS
                     DialogResult result = MessageBox.Show("Вернуть ваш первоначальный статус?", "Закрытие", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                     switch (result)
                     {
+                        // Возвращаем и завершаем программу
                         case DialogResult.Yes:
-                            _statusFactory.Set(_oldstatus);
+                            _statusFactory.Set(_oldstatus); 
                             break;
+                        // Не завершаем программу
                         case DialogResult.Cancel:
                             e.Cancel = true;
                             break;
+                        // Просто завершаем программу
                         case DialogResult.No:
                             break;
                     }
@@ -85,20 +98,23 @@ namespace iTunesSVKS
             }
             catch (Exception)
             {
-                e.Cancel = true;
+                e.Cancel = true; // Если произошла какая-то ошибка, то не даем программе завершиться. Надо изменить функцию, ибо это неверно
             }
         }
 
-
+        // Событие при клике «Перелогиниться»
         private void reauthToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Reauth();
         }
 
+        // Функция «Перелогиниться»
         private void Reauth()
         {
+            // Выполняется если пользователь незалогинен
             if (!_isLoggedIn)
             {
+                // Соединяемся с VK API, передаем ему ключ приложения и необходимые нам разрешения
                 SessionManager sm = new SessionManager(2369574, Convert.ToInt32(ApiPerms.UserStatus | ApiPerms.WallPublisher));
                 _sessionInfo = sm.GetSession();
                 if (_sessionInfo != null)
@@ -107,6 +123,7 @@ namespace iTunesSVKS
                 }
             }
 
+            // Выполняется если пользователь залогинен
             if (_isLoggedIn)
             {
                 _manager = new ApiManager(_sessionInfo) {Timeout = 10000};
@@ -119,32 +136,36 @@ namespace iTunesSVKS
             
         }
 
+        // Выполняется при открытии программы
         private void MainWnd_Shown(object sender, EventArgs e)
         {
             Text = AppTitle + ": Не авторизован!";
             checkInstall();
         }
 
-
+        // Выполняется при изменении размера окна (В данном случае, при сворачивании)
         private void MainWnd_Resize(object sender, EventArgs e)
         {
             if (FormWindowState.Minimized == WindowState)
             {
-                Hide();
-                notifyIcon1.Visible = true;
+                Hide(); // Скрываем главное окно
+                notifyIcon1.Visible = true; // Включаем иконку в трее
             }
         }
 
+        // Одна из самых «таких» функций, которая проверяет запущен ли iTunes или нет. Требуется рефакторинг
         public void checkiTunes()
         {
-            const string iTunesProcessName = "iTunes";
-            Process[] iTunesProcess = Process.GetProcessesByName(iTunesProcessName);
+            const string iTunesProcessName = "iTunes"; 
+            Process[] iTunesProcess = Process.GetProcessesByName(iTunesProcessName); // Ищем процесс с iTunes
 
+            // Выполняется, если iTunes.exe не запущен
             if (iTunesProcess.Length == 0)
             {
-                Console.WriteLine("{0} не запущен", iTunesProcessName);
-                iTunesStatus.Text = "iTunes не запущен.";
-                iTunesStatus.ForeColor = Color.Red;
+                iTunesStatus.Text = "iTunes не запущен."; // Меняем iTunes-статус (отображается в самом низу программы)
+                iTunesStatus.ForeColor = Color.Red; // Меняем цвет iTunes-статуса
+
+                // Отключаем определенные кнопки и поля, которые не работают, при выключенном iTunes
                 setStatusButton.Enabled = false;
                 checkBox1.Checked = false;
                 checkBox1.Enabled = false;
@@ -154,38 +175,47 @@ namespace iTunesSVKS
                 shareButton.Enabled = false;
                 wallSongButton.Enabled = false;
                 idInput.Enabled = false;
-                checkiTunesTimer.Enabled = true;
+                checkiTunesTimer.Enabled = true; // Включаем таймер, который каждые n-секунд выполняет функцию checkiTunes()
                 customStatus.Enabled = false;
                 customSet.Enabled = false;
             } 
+
+            // Выполняется если iTunes.exe запущен    
             else
             {
 
-                iTunesApp app = new iTunesAppClass();
+                iTunesApp app = new iTunesAppClass(); // Регистрируем наш iTunes, как класс
 
+                // Пытаемся получить текущую композицию
                 try
                 {
-                    checkiTunesTimer.Enabled = false;
-                    iTunesStatus.Text = "iTunes запущен.";
-                    iTunesStatus.ForeColor = Color.Green;
+                    checkiTunesTimer.Enabled = false; // Отключаем таймер, которые каждые n-секунд проверяет запущенность iTunes
+                    iTunesStatus.Text = "iTunes запущен."; // Меняем iTunes-статус
+                    iTunesStatus.ForeColor = Color.Green; // Меняем цвет у iTunes-статус
 
+                    // Включаем определенные кнопки и поля, которые нам понадобятся при работе с программой
                     setStatusButton.Enabled = true;
                     checkBox1.Enabled = true;
-                    timer1.Enabled = true;
+                    timer1.Enabled = true; // Включаем таймер, который каждые n-секунд выполняет функцию GetCurrentSong()
                     playlistUse.Enabled = true;
                     countCheck.Enabled = true;
                     wallSongButton.Enabled = true;
                     idInput.Enabled = true;
                     customStatus.Enabled = true;
 
+                    // Инициализируем переменные и записываем в них данные о композиции
                     string artist = app.CurrentTrack.Artist;
                     string name = app.CurrentTrack.Name;
                     GetCurrentSong();
                 }
+
+                // Если не удалось получить композицию (Например, если проигрывание остановлено)
                 catch (Exception)
                 {
-                    iTunesStatus.ForeColor = Color.Red;
-                    iTunesStatus.Text = "Воспроизведите любую песню в iTunes.";
+                    iTunesStatus.ForeColor = Color.Red; // Меняем цвет у iTunes-статус
+                    iTunesStatus.Text = "Воспроизведите любую песню в iTunes."; // Меняем iTunes-статус
+
+                    // Вновь отключаем определенные кнопки и поля
                     setStatusButton.Enabled = false;
                     checkBox1.Checked = false;
                     checkBox1.Enabled = false;
@@ -195,58 +225,75 @@ namespace iTunesSVKS
                     shareButton.Enabled = false;
                     wallSongButton.Enabled = false;
                     idInput.Enabled = false;
-                    checkiTunesTimer.Enabled = true;
+                    checkiTunesTimer.Enabled = true; // Включаем таймер, который каждые n-секунд выполняет checkiTunes()
                     customSet.Enabled = false;
                     customStatus.Enabled = false;
                 }
             }
         }
-
+        
+        // Выполняется при закрытии формы
         private void MainWnd_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Заглушка
         }
 
+        // Выполняется при нажатии кнопки «Установить»
         private void setStatusButton_Click(object sender, EventArgs e)
         {
             SetStatus();
         }
 
+        // Выполняется при каждом тике таймера, который, в свою очередь, получает текущую композицию
         private void timer1_Tick(object sender, EventArgs e)
         {
             GetCurrentSong();
         }
 
+        // Выполняется при получении статуса
         private void GetStatus()
         {
+            // Пробуем получить статус
             try
             {
-                _statusFactory = new StatusFactory(_manager);
+                _statusFactory = new StatusFactory(_manager); // Инициализируем «фабрику» статусов
+
+                // Получаем статус текущего пользователя и вставляем его в поле «Первоначальный статус» (textBox1)
                 textBox1.Text = _statusFactory.Get(int.Parse(_sessionInfo.MemberId));
-                _oldstatus = textBox1.Text;
+
+                _oldstatus = textBox1.Text; // Записываем наш статус в переменную
             }
+
+            // Если не получилось, то выдаем ошибку в специальном поле
             catch (Exception)
             {
                 statusStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
             }
         }
 
+        // Выполняется при установке статуса 
         private void SetStatus()
         {
             try
             {
+                // Если чекбокс «Свой» отмечен, то выполняем следующее..
                 if (_custom)
                 {
-                    _newstatus = textBox2.Text;
-                    _newstatus = _newstatus.Replace("&", " and ");
-                    _statusFactory.Set(_newstatus);
+                    _newstatus = textBox2.Text; // Новый статус получаем из textBox2 (Самое первое, верхнее поле)
+                    _newstatus = _newstatus.Replace("&", " and "); // Заменяем нечитаемый сервером символ на альтернативную текстовую замену
+                    _statusFactory.Set(_newstatus); // Устанавливаем новый статус
                 }
+
+                // Если чекбокс «Свой» неактивен, то выполняем это..
                 else if (_custom == false)
                 {
-                    _newstatus = String.Concat(_templatestatus, textBox2.Text);
-                    _newstatus = _newstatus.Replace("&", " and ");
-                    _statusFactory.Set(_newstatus);
+                    _newstatus = String.Concat(_templatestatus, textBox2.Text); // Новый статус получаем из смеси префикса и textBox2
+                    _newstatus = _newstatus.Replace("&", " and "); // Заменяем символы
+                    _statusFactory.Set(_newstatus); // Устанавливаем статус
                 }
             }
+
+            // Если не получилось, то выдаем ошибку в специальном поле
             catch (Exception)
             {
                 statusStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
@@ -254,6 +301,7 @@ namespace iTunesSVKS
 
         }
 
+        // Выполняется после нажатия на кнопку «Вернуть»
         private void SetOriginalStatus()
         {
             try
@@ -266,39 +314,50 @@ namespace iTunesSVKS
             }
         }
 
+        // Выполняется при получении текущей композиции. Еще одна довольно затратная функция, требующая рефакторинга
         public void GetCurrentSong()
         {
-            iTunesApp app = new iTunesAppClass();
+            iTunesApp app = new iTunesAppClass(); // Вновь регистрируем iTunes, как класс приложения
+
+            //Пробуем получить композицию
             try
             {
-                string artist = app.CurrentTrack.Artist;
-                string name = app.CurrentTrack.Name;
-                string playlist = app.CurrentTrack.Playlist.Name;
-                int count = app.CurrentTrack.PlayedCount;
-                string currentSong = String.Concat(artist, " - ", name);
-                string currentSongLite = String.Concat(artist, " - ", name);
+                string artist = app.CurrentTrack.Artist; // Получаем исполнителя
+                string name = app.CurrentTrack.Name; // Получаем название
+                string playlist = app.CurrentTrack.Playlist.Name; // Получаем плейлист
+                int count = app.CurrentTrack.PlayedCount; // Получаем количество прослушиваний
+
+                // Соединяем исполнителя и название в одну строку (требуется пояснение и рефакторинг!)
+                string currentSong = String.Concat(artist, " - ", name); 
+                string currentSongLite = String.Concat(artist, " - ", name); // Инициализация Lite-версии композиции, которая будем показываться в трее
                 string currentSongTemp = String.Concat(artist, " - ", name);
+
+                // Если чекбокс «Плейлист» активен, то вставляем название плейлиста в статус
                 if (_playlistInStatus)
                 {
                     currentSong = String.Concat(currentSongTemp, ". Плейлист: ", "'", playlist, "'");
                     currentSongTemp = currentSong;
                 }
 
+                // Если чекбокс «Счетчик» активен, то вставляем количество прослушиваний
                 if (_countInStatus)
                 {
                     currentSong = String.Concat(currentSongTemp, ". Прослушиваний: ", count);
                 }
 
+                // Если чекбоксы «Счетчик» и «Плейлист» неактивны, то показываем статус, как Исполнитель - Название
                 if (_countInStatus == false && _playlistInStatus == false)
                 {
                     currentSong = currentSongLite;
                 }
 
+                // Если чекбокс «Свой» неактивен, то самое верхнее, первое поле равно текущему статусу, который получен чуть выше
                 if (_custom == false)
                 {
                     textBox2.Text = currentSong;
                 }
 
+                // Если длина Lite-версии песни больше 64-х символов (максимум в notifyIcon), то показываем просто название композиции
                 if (currentSongLite.Length > 64)
                 {
                     notifyIcon1.Text = name;
@@ -308,10 +367,12 @@ namespace iTunesSVKS
                     notifyIcon1.Text = currentSongLite;
                 }
 
+                // Если длина статуса превышает максимально допустимую, по меркам VK.com, то просим пользователя отключить некоторые опции
                 if (currentSong.Length > 131)
                 {
                     statusStatus.Text = "Длина статуса превышает рекомендуемую. Его часть, возможно, будет урезана. Максимум - 130 знаков. Отключите ненужные опции.";
 
+                    // Если чекбокс «Не показывать уведомления» не активен, то показываем уведомления в трее
                     if (_showTips)
                     {
                         notifyIcon1.ShowBalloonTip(5, "Внимание!", "Статус превысил рекомендуемую длину.", ToolTipIcon.Warning);
@@ -322,6 +383,7 @@ namespace iTunesSVKS
                     statusStatus.Text = "Всё работает корректно.";
                 }
 
+                // Если чекбокс «Обновлять» активирован, то обновляем статус, выполняя функцию SetStatus()
                 if (checkBox1.Checked)
                 {
                     SetStatus();
@@ -329,34 +391,39 @@ namespace iTunesSVKS
             }
             catch (System.Exception)
             {
-                statusStatus.Text = "Неопознанная ошибка. Попробуйте перезапустить программу.";
-                checkiTunes();
+                statusStatus.Text = "Неопознанная ошибка. Попробуйте перезапустить программу."; // Вновь показываем ошибку в специальном поле
+                checkiTunes(); // На всякий случай проверяем, запущен ли iTunes
             }
         }
 
+        // Выполняется при нажатии на кнопку «Вернуть»
         private void oldStatusButton_Click(object sender, EventArgs e)
         {
             SetOriginalStatus();
         }
 
+        // Выполняется при двойном клике на иконку в трее
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Show();
-            notifyIcon1.Visible = false;
-            WindowState = FormWindowState.Normal;
+            Show(); // Показываем главное окно
+            notifyIcon1.Visible = false; // Скрываем иконку в трее
+            WindowState = FormWindowState.Normal; // Разворачиваем окно
             
         }
 
+        // Выполняется при нажатии на кнопку «Установить», которая устанавливает префикс к статусу
         private void setTemplateButton_Click(object sender, EventArgs e)
         {
             _templatestatus = templateForStatus.Text;
         }
 
+        // Выполняется при каждом тике таймера, который выполняет функцию проверки iTunes
         private void checkiTunesTimer_Tick(object sender, EventArgs e)
         {
             checkiTunes();
         }
 
+        // Выполняется при изменении статуса чекбокса «Плейлист»
         private void playlistUse_CheckedChanged(object sender, EventArgs e)
         {
             _playlistInStatus = _playlistInStatus == false;
@@ -364,22 +431,26 @@ namespace iTunesSVKS
             GetCurrentSong();
         }
 
+        // Выполняется при изменении статуса чекбокса «Обновлять»
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             setStatusButton.Enabled = checkBox1.Checked != true;
         }
 
+        // Выполняется при попытке вызове окна «О программе»
         private void aboutMenuItem_Click(object sender, EventArgs e)
         {
             ShowAboutBox();
         }
 
+        // Вызываем окно «О программе»
         private void ShowAboutBox()
         {
             About a = new About();
             a.ShowDialog();
         }
 
+        // Выполняется при изменении статуса чекбокса «Счетчик»
         private void countCheck_CheckedChanged(object sender, EventArgs e)
         {
             _countInStatus = _countInStatus == false;
@@ -387,47 +458,60 @@ namespace iTunesSVKS
             GetCurrentSong();
         }
 
+        // Выполняется при попытке перелогиниться
         private void reauthContextMenu_Click(object sender, EventArgs e)
         {
             Reauth();
         }
 
+        // Выполняется при попытке закрыть программу
         private void exitContextMenu_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        // Выполняется при попытке обновить статус
         private void updateStripMenu_Click(object sender, EventArgs e)
         {
             checkiTunes();
             SetStatus();
         }
 
+        // Выполняется при изменении статуса чекбокса «Не показывать уведомления»
         private void showTipsCheck_CheckedChanged(object sender, EventArgs e)
         {
             _showTips = !_showTips;
         }
 
+        // Выполняется при нажатии на кнопку «Порекомендовать»
         private void shareButton_Click(object sender, EventArgs e)
         {
-            iTunesApp app = new iTunesAppClass();
+            iTunesApp app = new iTunesAppClass(); // И снова регистрируем iTunes, как класс приложения
 
+            // Получаем нужную нам информацию о композиции
             string artist = app.CurrentTrack.Artist;
             string name = app.CurrentTrack.Name;
             int count = app.CurrentTrack.PlayedCount;
-            int id;
 
-            string currentSong = String.Concat(artist, " - ", name);
+            int id; // Инициализируем нужную переменную, которая будет содержать ID нужного пользователя
+
+            string currentSong = String.Concat(artist, " - ", name); // Соединяем исполнителя и название в одну строку
+
+            // Соединяем текст, текущую композицию и количество прослушиваний в одну строку
             string shareText = String.Concat("Привет! :D. Рекомендую послушать трек '", currentSong, "'. Я прослушал его уже где-то ", count, " раз. Вообще супер!");
 
-            _wallFactory = new WallFactory(_manager);
+            _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
+
+            // Пробуем опубликовать на стену
             try
             {
-                id = int.Parse(idInput.Text);
-                _wallFactory.Post(id, shareText);
-                actionsStatus.Text = "Опубликовано.";
-                actionsStatusTimer.Enabled = true;
+                id = int.Parse(idInput.Text); // Преобразуем текст из поля idInput в тип int
+                _wallFactory.Post(id, shareText); // Опубликовываем текст рекомендации на стену того ID'a, которого мы указали в поле выше
+                actionsStatus.Text = "Опубликовано."; // Уведомляем пользователя об успешности
+                actionsStatusTimer.Enabled = true; // Включаем таймер, который каждые n-секунд сбрасывает специальной поле статуса действий
             }
+
+            // Если неудачно, то выдаем ошибку
             catch (Exception)
             {
                 actionsStatus.Text = "Введен некорректный ID.";
@@ -435,17 +519,23 @@ namespace iTunesSVKS
             }
         }
 
+        // Выполняется при нажатии «Поместить себе на страницу»
         private void wallSongButton_Click(object sender, EventArgs e)
         {
-            iTunesApp app = new iTunesAppClass();
+            iTunesApp app = new iTunesAppClass(); // Как обычно регистрируем iTunes, как класс приложения
 
+            // Получаем нужную нам информацию о композиции
             string artist = app.CurrentTrack.Artist;
             string name = app.CurrentTrack.Name;
             int count = app.CurrentTrack.PlayedCount;
 
+            // Соединяем исполнителя и название в одну строку
             string currentSong = String.Concat(artist, " - ", name);
+
+            // Формируем текст для расшаривания
             string shareText = String.Concat("Рекомендую вам послушать трек '", currentSong, "'. Я прослушал его уже где-то ", count, " раз. Мне нравится! :D");
 
+            // Пробуем поместить себе на стену
             try
             {
                 _wallFactory = new WallFactory(_manager);
@@ -459,22 +549,27 @@ namespace iTunesSVKS
             }
         }
 
+        // Выполняется при каждом тике таймера, который сбрасывает поле со статусом действий
         private void actionsStatusTimer_Tick(object sender, EventArgs e)
         {
             actionsStatus.Text = "Выберите необходимое действие.";
             actionsStatusTimer.Enabled = false;
         }
 
+        // Выполняется при каждом изменении поля idInput
         private void idInput_TextChanged(object sender, EventArgs e)
         {
             shareButton.Enabled = idInput.TextLength > 0;
         }
 
+        // Выполняется при создании «Своего» статуса
         private void customSet_Click(object sender, EventArgs e)
         {
             try
             {
-                iTunesApp app = new iTunesAppClass();
+                iTunesApp app = new iTunesAppClass(); // Регистрируем iTunes
+
+                // Получаем необходимую информацию о композиции
                 string artist = app.CurrentTrack.Artist;
                 string name = app.CurrentTrack.Name;
                 string playlist = app.CurrentTrack.Playlist.Name;
@@ -482,13 +577,14 @@ namespace iTunesSVKS
                 string prefix = _templatestatus;
                 int count = app.CurrentTrack.PlayedCount;
 
+                // Преобразуем ключевые слова
                 string result1 = customText.Text.Replace("{name}", name);
                 string result2 = result1.Replace("{artist}", artist);
                 string result3 = result2.Replace("{playlist}", playlist);
                 string result4 = result3.Replace("{count}", count.ToString());
                 string result5 = result4.Replace("{album}", album);
                 string result6 = result5.Replace("{prefix}", prefix);
-                textBox2.Text = result6;
+                textBox2.Text = result6; // Выдаем результат
             }
             catch (Exception)
             {
@@ -496,8 +592,10 @@ namespace iTunesSVKS
             }
         }
 
+        // Выполняется при изменении статуса чекбоска «Свой»
         private void customStatus_CheckedChanged(object sender, EventArgs e)
         {
+            // Если чекбокс был неактивен, то..
             if (_custom == false)
             {
                 _custom = true;
@@ -509,6 +607,8 @@ namespace iTunesSVKS
                 textBox3.Enabled = true;
                 customText.Enabled = true;
             }
+            
+            // А если активен..
             else
             {
                 _custom = false;
@@ -520,11 +620,13 @@ namespace iTunesSVKS
             }
         }
 
+        // Выполняется при каждом изменении поля со своим статусом
         private void customText_TextChanged(object sender, EventArgs e)
         {
             customSet.Enabled = customText.TextLength > 0;
         }
 
+        // Выполняется при попытке развернуть программу
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
             Show();
@@ -532,33 +634,42 @@ namespace iTunesSVKS
             WindowState = FormWindowState.Normal;
         }
 
+        // Проверяется установленность iTunes SVKS
         private void checkInstall()
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\iTunesSVKS");
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\iTunesSVKS"); // Инициализируем ветку реестра, с которой будем работать
 
+            // Пробуем получить нужный ключ
             try
             {
-                object value = key.GetValue("Installed");
-                string valueS = value.ToString();
+                object value = key.GetValue("Installed"); // Пытаемся получить ключ
+                string valueS = value.ToString(); // Преобразуем ключ в строку
+
+                // Проверяем..
                 if (valueS == "1")
                 {
-                    Reauth();
+                    Reauth(); // Успешно! Значит можем авторизироваться
                 }
+
+                // Неуспешно..
                 else
                 {
+                    // Показываем предупреждение, но даем пользователю возможность продолжить работу с программой
                   DialogResult result = MessageBox.Show(
                         "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
                         "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                     if (result == DialogResult.OK)
                     {
-                        Close();
+                        Application.Exit(); // Если пользователь не хочет рисковать, то закрываем это всё
                     }
                     else
                     {
-                        Reauth();
+                        Reauth(); // Если пользователь рискнул, то логинимся
                     }
                 }
             }
+
+            // Ловим ошибку и выполняем всё то же, что и при else
             catch (Exception)
             {
                 DialogResult result = MessageBox.Show(
