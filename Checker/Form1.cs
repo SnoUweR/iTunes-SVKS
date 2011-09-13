@@ -135,25 +135,31 @@ namespace Checker
             }
         }
 
+        // Проверяем наличие соединения к VK.com (попросту говоря, пингуем сайт)
         private void checkInternet()
         {
             Text = "Добро пожаловать в iTunes SVKS | Шаг 3";
             stepLabel.Text = "Шаг 3: Проверка подключения к VK.com";
 
+            // Пробуем пропинговать VK.com
             try
             {
-                Ping pingSender = new Ping();
-                PingOptions options = new PingOptions { DontFragment = true };
+                Ping pingSender = new Ping();  // Инициализируем
+                PingOptions options = new PingOptions { DontFragment = true }; // Настраиваем (фактически, отключаем фрагментацию)
 
-                string data = "InatrailoffireIknowWewillbefreeagain";
-                byte[] buffer = Encoding.ASCII.GetBytes(data);
-                int timeout = 300;
-                PingReply reply = pingSender.Send("vk.com", timeout, buffer, options);
+                string data = "InatrailoffireIknowWewillbefreeagain"; // Формируем строку, которую отправим
+                byte[] buffer = Encoding.ASCII.GetBytes(data); // Кодируем строку в ASCII (не?)
+                int timeout = 300; // Устанавливаем таймаут
+                PingReply reply = pingSender.Send("vk.com", timeout, buffer, options); // Пингуем!
+
+                // Если ответ получен, то..
                 if (reply.Status == IPStatus.Success)
                 {
                     _internetStatus = true;
                     mainLabel.Text = "Соединение с VK.com установлено. Вы можете продолжить";
                 }
+
+                // А если не получен..
                 else
                 {
                     _internetStatus = false;
@@ -165,6 +171,7 @@ namespace Checker
                 }
             }
 
+            // Если произошла ошибка..        
             catch (Exception)
             {
                 _internetStatus = false;
@@ -176,9 +183,10 @@ namespace Checker
             }
         }
 
+        // Показываем финальный шаг
         private void showFinalStep()
         {
-            CreateRegistryRecord();
+            CreateRegistryRecord(); // Выполняем функцию создания записи в реестре
 
             Text = "Добро пожаловать в iTunes SVKS | Шаг 4";
             stepLabel.Text = "Шаг 4: Финальный шаг";
@@ -191,11 +199,13 @@ namespace Checker
                 "Первоначальная настройка iTunes SVKS успешно завершена. \n \n Теперь вы можете начать полноценную работу с программой. \n \n По всем вопросам и пожеланиям пишите на snouwer@gmail.com \n \n Удачного дня и работы! \n \n Для сохранения изменений запустите iTunes SVKS заного.";
         }
 
+        // При нажатии на «Закрыть», неожиданно, закрываем окно
         private void runButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        // Создаем запись в реестре
         private void CreateRegistryRecord()
         {
             RegistryKey key = Registry.CurrentUser;
