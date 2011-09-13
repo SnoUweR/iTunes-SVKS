@@ -2,7 +2,7 @@
 using System.Text;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
-using Microsoft.Win32;
+using Microsoft.Win32; //Подключаем библиотеку для работы с реестром
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
@@ -21,31 +21,38 @@ namespace Checker
 {
     public partial class Form1 : Form
     {
+        // Инициализируем нужные переменные
         private bool _iTunesInstalled = false;
         private bool _internetStatus = false;
 
+        // Происходит при создании окна Form1
         public Form1()
         {
             InitializeComponent();
         }
 
+        // Происходит при нажатии на кнопку «Далее» («Пропустить»)
         private void button1_Click(object sender, EventArgs e)
         {
+            // Если мы на первом шаге, то выполняем следующее..
             if(stepLabel.Text == "Шаг 1: Приветствие")
             {
-                checkInstall();
-                setupProgress.Value = 25;
+                checkInstall(); // Проверяем установленность iTunes
+                setupProgress.Value = 25; // Устанавливаем значение прогресс-бара на 25%
             }
+
+            // Если мы на втором шаге, то..
             else if(stepLabel.Text == "Шаг 2: Проверка iTunes")
             {
+                // Если iTunes не был найден, то показываем предупреждение
                 if(_iTunesInstalled == false)
                 {
 
                     DialogResult result = MessageBox.Show("Вы действительно хотите продолжить? Стабильная работа программы не гарантируется", "Закрытие", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.Yes)
                     {
-                        checkInternet();
-                        setupProgress.Value = 75;
+                        checkInternet(); // Проверяем доступ к интернету (пингуем VK.com)
+                        setupProgress.Value = 75; // Устанавливаем значение прогресс-бара на 75%
                     }
                     else
                     {
@@ -53,21 +60,23 @@ namespace Checker
                     }
                 }
 
-                checkInternet();
-                setupProgress.Value = 75;
-                nextStep.Text = "Далее";
+                checkInternet(); // Проверяем интернет (пингуем VK.com)
+                setupProgress.Value = 75; // Прогресс-бар на 75%
+                nextStep.Text = "Далее"; // Меняем название кнопки
             }
+
+            // Если мы на третьем шаге..
             else if(stepLabel.Text == "Шаг 3: Проверка подключения к VK.com")
             {
-
+                // Если пингование прошло неуспешно, то показываем предупреждение
                 if (_internetStatus == false)
                 {
                     DialogResult result = MessageBox.Show("Вы действительно хотите продолжить? Стабильная работа программы не гарантируется", "Закрытие", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.Yes)
                     {
-                        showFinalStep();
-                        setupProgress.Value = 100;
-                        nextStep.Visible = false;
+                        showFinalStep(); // Показываем последний шаг
+                        setupProgress.Value = 100; // Прогресс-бар на 100%
+                        nextStep.Visible = false; // Скрываем кнопку «Продолжить» («Пропустить»
                     }
                     else
                     {
@@ -76,21 +85,26 @@ namespace Checker
 
                 }
 
-                showFinalStep();
-                setupProgress.Value = 100;
+                showFinalStep(); // Показываем последний шаг
+                setupProgress.Value = 100; // Прогресс-бар на 100%
             }
         }
-
+        
+        // Проверяем установленность iTunes (А точнее, нужный ключ в реестре). Требуется найти другой способ(!)
         private void checkInstall()
         {
 
-            Text = "Добро пожаловать в iTunes SVKS | Шаг 2";
-            stepLabel.Text = "Шаг 2: Проверка iTunes";
+            Text = "Добро пожаловать в iTunes SVKS | Шаг 2"; // Меняем название окна
+            stepLabel.Text = "Шаг 2: Проверка iTunes"; // Меняем название шага
 
+            // Пробуем получить определенный ключ из реестра
             try
             {
 
                 RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Apple Computer, Inc.\iTunes");
+
+                // Ключ InstalledOnVista, при правильной установке iTunes, по идее, должен быть равен 1, если ОС пользователя - это
+                // Windows 7/Vista, и 0, если ОС - Windows XP и ниже
                 string s = key.GetValue("InstalledOnVista").ToString();
 
                 if (s == "1" || s == "0")
