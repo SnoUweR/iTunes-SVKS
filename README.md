@@ -1,4 +1,4 @@
-![Icon](http://dl.dropbox.com/u/3201889/svks.png) iTunes SVKS
+![Icon](http://dl.dropbox.com/u/3201889/svkst.png) iTunes SVKS
 ===========
 
 Russian
