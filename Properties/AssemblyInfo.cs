@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("iTunes SVKS")]
-[assembly: AssemblyDescription("iTunes Song VK Status. Scrobbles your current track from iTunes to VKontakte Status.")]
+[assembly: AssemblyDescription("Scrobbles your current track from iTunes to VKontakte Status.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("5stTEAM Studio")]
 [assembly: AssemblyProduct("iTunes SVKS")]
-[assembly: AssemblyCopyright("Copyright ©  2011")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.6")]
+[assembly: AssemblyFileVersion("1.0.6")]

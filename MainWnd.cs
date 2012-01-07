@@ -12,7 +12,7 @@ using Microsoft.Win32; //Подключаем библиотеку для раб
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
- * Copyright (c) 2011 Vladislav «SnoUweR» Kovalev at http://snouwer.ru
+ * Copyright (c) 2012 Vladislav «SnoUweR» Kovalev at http://snouwer.ru
 
  * Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации (в дальнейшем именуемыми "Программное Обеспечение"), безвозмездно использовать Программное Обеспечение без ограничений,
  * включая неограниченное право на использование, изменение, добавление, публикацию, распространение, также как и лицам, которым предоставляется данное Программное Обеспечение, при соблюдении следующих условий:
@@ -527,6 +527,7 @@ namespace iTunesSVKS
             string name = app.CurrentTrack.Name;
             int count = app.CurrentTrack.PlayedCount;
             //IITArtworkCollection cc = app.CurrentTrack.Artwork;
+            
 
             int id; // Инициализируем нужную переменную, которая будет содержать ID нужного пользователя
 
@@ -640,7 +641,7 @@ namespace iTunesSVKS
                 playlistUse.Enabled = false;
                 countCheck.Checked = false;
                 countCheck.Enabled = false;
-                genreCheck.Enabled = true;
+                genreCheck.Enabled = false;
                 genreCheck.Checked = false;
                 groupBox5.Enabled = true;
                 textBox3.Enabled = true;

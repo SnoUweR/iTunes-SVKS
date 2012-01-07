@@ -87,7 +87,6 @@
             this.onlineLabel = new System.Windows.Forms.Label();
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.eurekaLog1 = new EurekaLogSystem.EurekaLog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -740,7 +739,6 @@
         private System.Windows.Forms.Label friendsLabel;
         private System.Windows.Forms.Label onlineLabel;
         private System.Windows.Forms.TextBox statusBoxCheck;
-        private EurekaLogSystem.EurekaLog eurekaLog1;
         private System.Windows.Forms.CheckBox albumArtCheckBox;
         private System.Windows.Forms.CheckBox genreCheck;
     }
