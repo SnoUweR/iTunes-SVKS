@@ -20,18 +20,18 @@ Russian
 
 ### TODO:
 
-1) Исправить большинство багов
-2) Привлечь к разработке других программистов
-3) Написать unit-тесты к iTunes SVKS
+1. Исправить большинство багов
+2. Привлечь к разработке других программистов
+3. Написать unit-тесты к iTunes SVKS
 
 
 ### Использование:
 
-1) Запустить Checker.exe
-2) Пройти все «Шаги»
-3) Запустить iTunesSVKS.exe
-4) ???????
-5) PROFIT
+1. Запустить Checker.exe
+2. Пройти все «Шаги»
+3. Запустить iTunesSVKS.exe
+4. ???????
+5. PROFIT
 
 
 Требуется помощь сторонних программистов. Если хотите поучаствовать в проекте, то пишите мне в ЛС.
@@ -57,18 +57,18 @@ The program allows you to receive information about listening to a song in iTune
 
 ### TODO: 
 
-1) Fix most bugs 
-2) Engage in the development other programmers
-3) Write unit-tests to iTunes SVKS 
+1. Fix most bugs 
+2. Engage in the development other programmers
+3. Write unit-tests to iTunes SVKS 
 
 
 ### Uses: 
 
-1) Run Checker.exe 
-2) Complete all the «Steps»
-3) Start iTunesSVKS.exe 
-4) ??????? 
-5) PROFIT 
+1. Run Checker.exe 
+2. Complete all the «Steps»
+3. Start iTunesSVKS.exe 
+4. ??????? 
+5. PROFIT 
 
 
 The source code is licensed under the MIT. 
