@@ -33,12 +33,14 @@ Russian
 4. ???????
 5. PROFIT
 
+### Другая информация:
 
 Требуется помощь сторонних программистов. Если хотите поучаствовать в проекте, то пишите мне в ЛС.
 Исходный код выкладывается под лицензией MIT.
 
 Программа использует «VK API for .NET» (ApiCore.dll), которое разработано [xternalx](xternalx.com).
 
+---
 English
 -------
 
@@ -70,6 +72,7 @@ The program allows you to receive information about listening to a song in iTune
 4. ??????? 
 5. PROFIT 
 
+### Other Info:
 
 The source code is licensed under the MIT. 
 
