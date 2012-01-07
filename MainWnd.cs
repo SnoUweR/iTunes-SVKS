@@ -37,12 +37,15 @@ namespace iTunesSVKS
         private string _newstatus;
         private string _oldstatus;
         private string _templatestatus = "[iTunes] ";
+        private string _currentstatus;
 
-        private bool _isLoggedIn = false;
-        private bool _playlistInStatus = false;
-        private bool _countInStatus = false;
+        private bool _isLoggedIn;
+        private bool _playlistInStatus;
+        private bool _genreInStatus;
+        private bool _countInStatus;
         private bool _showTips = true;
-        private bool _custom = false;
+        private bool _coverArt;
+        private bool _custom;
 
         private StatusFactory _statusFactory;
         private WallFactory _wallFactory;
@@ -121,6 +124,7 @@ namespace iTunesSVKS
                 {
                     _isLoggedIn = true;
                 }
+                Reauth();
             }
 
             // Выполняется если пользователь залогинен
@@ -199,6 +203,7 @@ namespace iTunesSVKS
                     timer1.Enabled = true; // Включаем таймер, который каждые n-секунд выполняет функцию GetCurrentSong()
                     playlistUse.Enabled = true;
                     countCheck.Enabled = true;
+                    genreCheck.Enabled = true;
                     wallSongButton.Enabled = true;
                     idInput.Enabled = true;
                     customStatus.Enabled = true;
@@ -222,6 +227,7 @@ namespace iTunesSVKS
                     timer1.Enabled = false;
                     playlistUse.Enabled = false;
                     countCheck.Enabled = false;
+                    genreCheck.Enabled = false;
                     shareButton.Enabled = false;
                     wallSongButton.Enabled = false;
                     idInput.Enabled = false;
@@ -281,15 +287,25 @@ namespace iTunesSVKS
                 {
                     _newstatus = textBox2.Text; // Новый статус получаем из textBox2 (Самое первое, верхнее поле)
                     _newstatus = _newstatus.Replace("&", " and "); // Заменяем нечитаемый сервером символ на альтернативную текстовую замену
-                    _statusFactory.Set(_newstatus); // Устанавливаем новый статус
+                    _newstatus = _newstatus.Replace("+", ", ");
+                    if (_newstatus != _currentstatus)
+                    {
+                        _statusFactory.Set(_newstatus); // Устанавливаем новый статус
+                        _currentstatus = _newstatus;
+                    }
                 }
 
                 // Если чекбокс «Свой» неактивен, то выполняем это..
                 else if (_custom == false)
                 {
                     _newstatus = String.Concat(_templatestatus, textBox2.Text); // Новый статус получаем из смеси префикса и textBox2
+                    _newstatus = _newstatus.Replace("+", ", ");
                     _newstatus = _newstatus.Replace("&", " and "); // Заменяем символы
-                    _statusFactory.Set(_newstatus); // Устанавливаем статус
+                    if (_newstatus != _currentstatus)
+                    {
+                        _statusFactory.Set(_newstatus); // Устанавливаем новый статус
+                        _currentstatus = _newstatus;
+                    }
                 }
             }
 
@@ -326,6 +342,7 @@ namespace iTunesSVKS
                 string name = app.CurrentTrack.Name; // Получаем название
                 string playlist = app.CurrentTrack.Playlist.Name; // Получаем плейлист
                 int count = app.CurrentTrack.PlayedCount; // Получаем количество прослушиваний
+                string genre = app.CurrentTrack.Genre; // Получаем жанр
 
                 // Соединяем исполнителя и название в одну строку (требуется пояснение и рефакторинг!)
                 string currentSong = String.Concat(artist, " - ", name); 
@@ -343,10 +360,16 @@ namespace iTunesSVKS
                 if (_countInStatus)
                 {
                     currentSong = String.Concat(currentSongTemp, ". Прослушиваний: ", count);
+                    currentSongTemp = currentSong;
+                }
+
+                if (_genreInStatus)
+                {
+                    currentSong = String.Concat(currentSongTemp, ". Жанр: ", "'", genre, "'");
                 }
 
                 // Если чекбоксы «Счетчик» и «Плейлист» неактивны, то показываем статус, как Исполнитель - Название
-                if (_countInStatus == false && _playlistInStatus == false)
+                if (_countInStatus == false && _playlistInStatus == false && _genreInStatus == false)
                 {
                     currentSong = currentSongLite;
                 }
@@ -431,6 +454,12 @@ namespace iTunesSVKS
             GetCurrentSong();
         }
 
+        private void genreCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            _genreInStatus = _genreInStatus == false;
+            GetCurrentSong();
+        }
+
         // Выполняется при изменении статуса чекбокса «Обновлять»
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
@@ -483,6 +512,11 @@ namespace iTunesSVKS
             _showTips = !_showTips;
         }
 
+        private void albumArtCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _coverArt = albumArtCheckBox.Checked;
+        }
+
         // Выполняется при нажатии на кнопку «Порекомендовать»
         private void shareButton_Click(object sender, EventArgs e)
         {
@@ -492,6 +526,7 @@ namespace iTunesSVKS
             string artist = app.CurrentTrack.Artist;
             string name = app.CurrentTrack.Name;
             int count = app.CurrentTrack.PlayedCount;
+            //IITArtworkCollection cc = app.CurrentTrack.Artwork;
 
             int id; // Инициализируем нужную переменную, которая будет содержать ID нужного пользователя
 
@@ -574,6 +609,7 @@ namespace iTunesSVKS
                 string name = app.CurrentTrack.Name;
                 string playlist = app.CurrentTrack.Playlist.Name;
                 string album = app.CurrentTrack.Album;
+                string genre = app.CurrentTrack.Genre;
                 string prefix = _templatestatus;
                 int count = app.CurrentTrack.PlayedCount;
 
@@ -583,8 +619,9 @@ namespace iTunesSVKS
                 string result3 = result2.Replace("{playlist}", playlist);
                 string result4 = result3.Replace("{count}", count.ToString());
                 string result5 = result4.Replace("{album}", album);
-                string result6 = result5.Replace("{prefix}", prefix);
-                textBox2.Text = result6; // Выдаем результат
+                string result6 = result5.Replace("{genre}", genre);
+                string result7 = result6.Replace("{prefix}", prefix);
+                textBox2.Text = result7; // Выдаем результат
             }
             catch (Exception)
             {
@@ -603,6 +640,8 @@ namespace iTunesSVKS
                 playlistUse.Enabled = false;
                 countCheck.Checked = false;
                 countCheck.Enabled = false;
+                genreCheck.Enabled = true;
+                genreCheck.Checked = false;
                 groupBox5.Enabled = true;
                 textBox3.Enabled = true;
                 customText.Enabled = true;
@@ -614,6 +653,7 @@ namespace iTunesSVKS
                 _custom = false;
                 playlistUse.Enabled = true;
                 countCheck.Enabled = true;
+                genreCheck.Enabled = true;
                 groupBox5.Enabled = false;
                 textBox3.Enabled = false;
                 customText.Enabled = false;

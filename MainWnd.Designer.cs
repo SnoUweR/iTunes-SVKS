@@ -54,11 +54,13 @@
             this.customText = new System.Windows.Forms.TextBox();
             this.customSet = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.albumArtCheckBox = new System.Windows.Forms.CheckBox();
             this.actionsStatus = new System.Windows.Forms.Label();
             this.idInput = new System.Windows.Forms.TextBox();
             this.shareButton = new System.Windows.Forms.Button();
             this.wallSongButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.genreCheck = new System.Windows.Forms.CheckBox();
             this.customStatus = new System.Windows.Forms.CheckBox();
             this.statusStatus = new System.Windows.Forms.Label();
             this.showTipsCheck = new System.Windows.Forms.CheckBox();
@@ -85,6 +87,7 @@
             this.onlineLabel = new System.Windows.Forms.Label();
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.eurekaLog1 = new EurekaLogSystem.EurekaLog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -281,6 +284,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.albumArtCheckBox);
             this.groupBox4.Controls.Add(this.actionsStatus);
             this.groupBox4.Controls.Add(this.idInput);
             this.groupBox4.Controls.Add(this.shareButton);
@@ -291,6 +295,18 @@
             this.groupBox4.TabIndex = 22;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Действия";
+            // 
+            // albumArtCheckBox
+            // 
+            this.albumArtCheckBox.AutoSize = true;
+            this.albumArtCheckBox.Enabled = false;
+            this.albumArtCheckBox.Location = new System.Drawing.Point(10, 106);
+            this.albumArtCheckBox.Name = "albumArtCheckBox";
+            this.albumArtCheckBox.Size = new System.Drawing.Size(186, 30);
+            this.albumArtCheckBox.TabIndex = 24;
+            this.albumArtCheckBox.Text = "Прикрепить обложку альбома, \r\nесли это возможно";
+            this.albumArtCheckBox.UseVisualStyleBackColor = true;
+            this.albumArtCheckBox.CheckedChanged += new System.EventHandler(this.albumArtCheckBox_CheckedChanged);
             // 
             // actionsStatus
             // 
@@ -337,6 +353,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.genreCheck);
             this.groupBox2.Controls.Add(this.customStatus);
             this.groupBox2.Controls.Add(this.statusStatus);
             this.groupBox2.Controls.Add(this.showTipsCheck);
@@ -352,6 +369,18 @@
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры";
+            // 
+            // genreCheck
+            // 
+            this.genreCheck.AutoSize = true;
+            this.genreCheck.Enabled = false;
+            this.genreCheck.Location = new System.Drawing.Point(6, 127);
+            this.genreCheck.Name = "genreCheck";
+            this.genreCheck.Size = new System.Drawing.Size(55, 17);
+            this.genreCheck.TabIndex = 21;
+            this.genreCheck.Text = "Жанр";
+            this.genreCheck.UseVisualStyleBackColor = true;
+            this.genreCheck.CheckedChanged += new System.EventHandler(this.genreCheck_CheckedChanged);
             // 
             // customStatus
             // 
@@ -523,7 +552,8 @@
             this.textBox3.Size = new System.Drawing.Size(190, 90);
             this.textBox3.TabIndex = 0;
             this.textBox3.Text = "{name} - Название песни\r\n{artist} - Исполнитель песни\r\n{playlist} - Плейлист\r\n{al" +
-    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{prefix} - Префикс";
+    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{genre} - Жанр\r\n{prefix} - Префи" +
+    "кс";
             // 
             // idToCheck
             // 
@@ -604,7 +634,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Black;
-            this.pictureBox1.Image = global::iTunesSVKS.Properties.Resources.itunes_logo_black610092;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 27);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(559, 64);
@@ -628,7 +658,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainWnd";
-            this.Text = "Статус";
+            this.Text = "iTunes SVKS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWnd_FormClosing);
             this.Shown += new System.EventHandler(this.MainWnd_Shown);
             this.Resize += new System.EventHandler(this.MainWnd_Resize);
@@ -667,7 +697,6 @@
         private System.Windows.Forms.Timer checkiTunesTimer;
         private System.Windows.Forms.ToolStripMenuItem supportMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem reauthContextMenu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitContextMenu;
@@ -711,6 +740,9 @@
         private System.Windows.Forms.Label friendsLabel;
         private System.Windows.Forms.Label onlineLabel;
         private System.Windows.Forms.TextBox statusBoxCheck;
+        private EurekaLogSystem.EurekaLog eurekaLog1;
+        private System.Windows.Forms.CheckBox albumArtCheckBox;
+        private System.Windows.Forms.CheckBox genreCheck;
     }
 }
 
