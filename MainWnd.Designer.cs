@@ -86,7 +86,9 @@
             this.friendsLabel = new System.Windows.Forms.Label();
             this.onlineLabel = new System.Windows.Forms.Label();
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.albumArtBox = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -96,6 +98,7 @@
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -247,6 +250,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.albumArtBox);
             this.groupBox1.Controls.Add(this.customText);
             this.groupBox1.Controls.Add(this.customSet);
             this.groupBox1.Controls.Add(this.groupBox4);
@@ -266,14 +270,14 @@
             this.customText.Location = new System.Drawing.Point(6, 87);
             this.customText.Multiline = true;
             this.customText.Name = "customText";
-            this.customText.Size = new System.Drawing.Size(523, 39);
+            this.customText.Size = new System.Drawing.Size(380, 39);
             this.customText.TabIndex = 26;
             this.customText.TextChanged += new System.EventHandler(this.customText_TextChanged);
             // 
             // customSet
             // 
             this.customSet.Enabled = false;
-            this.customSet.Location = new System.Drawing.Point(420, 132);
+            this.customSet.Location = new System.Drawing.Point(277, 132);
             this.customSet.Name = "customSet";
             this.customSet.Size = new System.Drawing.Size(109, 23);
             this.customSet.TabIndex = 25;
@@ -283,6 +287,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.albumArtCheckBox);
             this.groupBox4.Controls.Add(this.actionsStatus);
             this.groupBox4.Controls.Add(this.idInput);
@@ -298,12 +303,11 @@
             // albumArtCheckBox
             // 
             this.albumArtCheckBox.AutoSize = true;
-            this.albumArtCheckBox.Enabled = false;
-            this.albumArtCheckBox.Location = new System.Drawing.Point(10, 106);
+            this.albumArtCheckBox.Location = new System.Drawing.Point(22, 139);
             this.albumArtCheckBox.Name = "albumArtCheckBox";
-            this.albumArtCheckBox.Size = new System.Drawing.Size(186, 30);
+            this.albumArtCheckBox.Size = new System.Drawing.Size(136, 17);
             this.albumArtCheckBox.TabIndex = 24;
-            this.albumArtCheckBox.Text = "Прикрепить обложку альбома, \r\nесли это возможно";
+            this.albumArtCheckBox.Text = "Прикрепить картинку";
             this.albumArtCheckBox.UseVisualStyleBackColor = true;
             this.albumArtCheckBox.CheckedChanged += new System.EventHandler(this.albumArtCheckBox_CheckedChanged);
             // 
@@ -342,7 +346,7 @@
             // wallSongButton
             // 
             this.wallSongButton.Enabled = false;
-            this.wallSongButton.Location = new System.Drawing.Point(22, 71);
+            this.wallSongButton.Location = new System.Drawing.Point(22, 108);
             this.wallSongButton.Name = "wallSongButton";
             this.wallSongButton.Size = new System.Drawing.Size(163, 25);
             this.wallSongButton.TabIndex = 21;
@@ -485,13 +489,13 @@
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(523, 33);
+            this.textBox2.Size = new System.Drawing.Size(380, 33);
             this.textBox2.TabIndex = 14;
             // 
             // setStatusButton
             // 
             this.setStatusButton.Enabled = false;
-            this.setStatusButton.Location = new System.Drawing.Point(448, 58);
+            this.setStatusButton.Location = new System.Drawing.Point(305, 58);
             this.setStatusButton.Name = "setStatusButton";
             this.setStatusButton.Size = new System.Drawing.Size(81, 23);
             this.setStatusButton.TabIndex = 4;
@@ -521,6 +525,7 @@
             // 
             // oldStatusButton
             // 
+            this.oldStatusButton.Enabled = false;
             this.oldStatusButton.Location = new System.Drawing.Point(198, 84);
             this.oldStatusButton.Name = "oldStatusButton";
             this.oldStatusButton.Size = new System.Drawing.Size(114, 23);
@@ -630,6 +635,16 @@
             this.statusBoxCheck.Size = new System.Drawing.Size(175, 59);
             this.statusBoxCheck.TabIndex = 3;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(22, 65);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(163, 23);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "Изменить текст";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Black;
@@ -640,6 +655,16 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
+            // 
+            // albumArtBox
+            // 
+            this.albumArtBox.Image = global::iTunesSVKS.Properties.Resources.art;
+            this.albumArtBox.Location = new System.Drawing.Point(392, 20);
+            this.albumArtBox.Name = "albumArtBox";
+            this.albumArtBox.Size = new System.Drawing.Size(137, 137);
+            this.albumArtBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.albumArtBox.TabIndex = 27;
+            this.albumArtBox.TabStop = false;
             // 
             // MainWnd
             // 
@@ -677,6 +702,7 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -741,6 +767,8 @@
         private System.Windows.Forms.TextBox statusBoxCheck;
         private System.Windows.Forms.CheckBox albumArtCheckBox;
         private System.Windows.Forms.CheckBox genreCheck;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PictureBox albumArtBox;
     }
 }
 

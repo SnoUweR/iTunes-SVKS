@@ -60,6 +60,20 @@ namespace iTunesSVKS.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap art {
+            get {
+                object obj = ResourceManager.GetObject("art", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap art_w {
+            get {
+                object obj = ResourceManager.GetObject("art_w", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Logo {
             get {
                 object obj = ResourceManager.GetObject("Logo", resourceCulture);

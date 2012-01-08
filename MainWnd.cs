@@ -1,12 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 //Подключаем VK API for .NET by xternalx
 using ApiCore;
 using ApiCore.Status;
 using ApiCore.Wall;
+using ApiCore.Photos;
 using iTunesLib; //Подключаем COM-библиотеку для работы с iTunes
 using Microsoft.Win32; //Подключаем библиотеку для работы с реестром
 
@@ -49,6 +51,7 @@ namespace iTunesSVKS
 
         private StatusFactory _statusFactory;
         private WallFactory _wallFactory;
+        private PhotosFactory _photosFactory;
 
         
         // Инициализация главного окна
@@ -307,6 +310,11 @@ namespace iTunesSVKS
                         _currentstatus = _newstatus;
                     }
                 }
+
+                if (oldStatusButton.Enabled == false)
+                {
+                    oldStatusButton.Enabled = true;
+                }
             }
 
             // Если не получилось, то выдаем ошибку в специальном поле
@@ -315,6 +323,25 @@ namespace iTunesSVKS
                 statusStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
             }
 
+        }
+
+        private void GetAlbumArt()
+        {
+            try
+            {
+                iTunesApp app = new iTunesAppClass();
+                IITArtworkCollection art1 = app.CurrentTrack.Artwork;
+                IITArtwork art2 = art1[1];
+                art2.SaveArtworkToFile(String.Concat(Environment.CurrentDirectory, @"\Album.jpg"));
+                Stream r = File.Open(String.Concat(Environment.CurrentDirectory, @"\Album.jpg"), FileMode.Open);
+                Image temp = Image.FromStream(r);
+                r.Close();
+                albumArtBox.Image = temp;
+            }
+            catch (Exception)
+            {
+                albumArtBox.Image = Properties.Resources.art;
+            }
         }
 
         // Выполняется после нажатия на кнопку «Вернуть»
@@ -348,6 +375,13 @@ namespace iTunesSVKS
                 string currentSong = String.Concat(artist, " - ", name); 
                 string currentSongLite = String.Concat(artist, " - ", name); // Инициализация Lite-версии композиции, которая будем показываться в трее
                 string currentSongTemp = String.Concat(artist, " - ", name);
+                string currentSongTemp2 = "";
+
+                if(currentSongTemp2 != currentSong)
+                {
+                    GetAlbumArt();
+                    currentSongTemp2 = currentSong;
+                }
 
                 // Если чекбокс «Плейлист» активен, то вставляем название плейлиста в статус
                 if (_playlistInStatus)
@@ -525,16 +559,26 @@ namespace iTunesSVKS
             // Получаем нужную нам информацию о композиции
             string artist = app.CurrentTrack.Artist;
             string name = app.CurrentTrack.Name;
+            string playlist = app.CurrentTrack.Playlist.Name;
+            string album = app.CurrentTrack.Album;
+            string genre = app.CurrentTrack.Genre;
+            string prefix = _templatestatus;
             int count = app.CurrentTrack.PlayedCount;
+
+            string shareText = Properties.Settings.Default.messageToPost;
+
+            // Преобразуем ключевые слова
+            shareText = shareText.Replace("{name}", name);
+            shareText = shareText.Replace("{artist}", artist);
+            shareText = shareText.Replace("{playlist}", playlist);
+            shareText = shareText.Replace("{count}", count.ToString());
+            shareText = shareText.Replace("{album}", album);
+            shareText = shareText.Replace("{genre}", genre);
+            shareText = shareText.Replace("{prefix}", prefix);
             //IITArtworkCollection cc = app.CurrentTrack.Artwork;
             
 
             int id; // Инициализируем нужную переменную, которая будет содержать ID нужного пользователя
-
-            string currentSong = String.Concat(artist, " - ", name); // Соединяем исполнителя и название в одну строку
-
-            // Соединяем текст, текущую композицию и количество прослушиваний в одну строку
-            string shareText = String.Concat("Привет! :D. Рекомендую послушать трек '", currentSong, "'. Я прослушал его уже где-то ", count, " раз. Вообще супер!");
 
             _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
 
@@ -542,7 +586,16 @@ namespace iTunesSVKS
             try
             {
                 id = int.Parse(idInput.Text); // Преобразуем текст из поля idInput в тип int
-                _wallFactory.Post(id, shareText); // Опубликовываем текст рекомендации на стену того ID'a, которого мы указали в поле выше
+                _wallFactory.Manager.Method("wall.post");
+                _wallFactory.Manager.Params("owner_id", id);
+                _wallFactory.Manager.Params("message", shareText);
+                if(_coverArt)
+                {
+                    _wallFactory.Manager.Params("attachments", "photo20312161_275784815");
+                    
+                }
+                _wallFactory.Manager.Execute();
+                //_wallFactory.Post(id, shareText); // Опубликовываем текст рекомендации на стену того ID'a, которого мы указали в поле выше
                 actionsStatus.Text = "Опубликовано."; // Уведомляем пользователя об успешности
                 actionsStatusTimer.Enabled = true; // Включаем таймер, который каждые n-секунд сбрасывает специальной поле статуса действий
             }
@@ -560,22 +613,40 @@ namespace iTunesSVKS
         {
             iTunesApp app = new iTunesAppClass(); // Как обычно регистрируем iTunes, как класс приложения
 
+            _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
+
             // Получаем нужную нам информацию о композиции
             string artist = app.CurrentTrack.Artist;
             string name = app.CurrentTrack.Name;
+            string playlist = app.CurrentTrack.Playlist.Name;
+            string album = app.CurrentTrack.Album;
+            string genre = app.CurrentTrack.Genre;
+            string prefix = _templatestatus;
             int count = app.CurrentTrack.PlayedCount;
 
-            // Соединяем исполнителя и название в одну строку
-            string currentSong = String.Concat(artist, " - ", name);
+            string shareText = Properties.Settings.Default.messageToPost;
 
-            // Формируем текст для расшаривания
-            string shareText = String.Concat("Рекомендую вам послушать трек '", currentSong, "'. Я прослушал его уже где-то ", count, " раз. Мне нравится! :D");
+            // Преобразуем ключевые слова
+            shareText = shareText.Replace("{name}", name);
+            shareText = shareText.Replace("{artist}", artist);
+            shareText = shareText.Replace("{playlist}", playlist);
+            shareText = shareText.Replace("{count}", count.ToString());
+            shareText = shareText.Replace("{album}", album);
+            shareText = shareText.Replace("{genre}", genre);
+            shareText = shareText.Replace("{prefix}", prefix);
 
             // Пробуем поместить себе на стену
             try
             {
-                _wallFactory = new WallFactory(_manager);
-                _wallFactory.Post(int.Parse(_sessionInfo.MemberId), shareText);
+                _wallFactory.Manager.Method("wall.post");
+                _wallFactory.Manager.Params("owner_id", int.Parse(_sessionInfo.MemberId));
+                _wallFactory.Manager.Params("message", shareText);
+                if (_coverArt)
+                {
+                    _wallFactory.Manager.Params("attachments", "photo20312161_275784815");
+
+                }
+                _wallFactory.Manager.Execute();
                 actionsStatus.Text = "Опубликовано.";
                 actionsStatusTimer.Enabled = true;
             }
@@ -595,7 +666,14 @@ namespace iTunesSVKS
         // Выполняется при каждом изменении поля idInput
         private void idInput_TextChanged(object sender, EventArgs e)
         {
-            shareButton.Enabled = idInput.TextLength > 0;
+            if (Properties.Settings.Default.messageToPost != null && idInput.TextLength > 0)
+            {
+                shareButton.Enabled = true;
+            }
+            else
+            {
+                shareButton.Enabled = false;
+            }
         }
 
         // Выполняется при создании «Своего» статуса
@@ -615,14 +693,14 @@ namespace iTunesSVKS
                 int count = app.CurrentTrack.PlayedCount;
 
                 // Преобразуем ключевые слова
-                string result1 = customText.Text.Replace("{name}", name);
-                string result2 = result1.Replace("{artist}", artist);
-                string result3 = result2.Replace("{playlist}", playlist);
-                string result4 = result3.Replace("{count}", count.ToString());
-                string result5 = result4.Replace("{album}", album);
-                string result6 = result5.Replace("{genre}", genre);
-                string result7 = result6.Replace("{prefix}", prefix);
-                textBox2.Text = result7; // Выдаем результат
+                string result = customText.Text.Replace("{name}", name);
+                result = result.Replace("{artist}", artist);
+                result = result.Replace("{playlist}", playlist);
+                result = result.Replace("{count}", count.ToString());
+                result = result.Replace("{album}", album);
+                result = result.Replace("{genre}", genre);
+                result = result.Replace("{prefix}", prefix);
+                textBox2.Text = result; // Выдаем результат
             }
             catch (Exception)
             {
@@ -725,6 +803,12 @@ namespace iTunesSVKS
                     Reauth();
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+           Message m = new Message();
+           m.ShowDialog();
         }
     }
 }
