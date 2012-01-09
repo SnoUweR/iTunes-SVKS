@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 //Подключаем VK API for .NET by xternalx
+using System.Xml;
 using ApiCore;
 using ApiCore.Status;
 using ApiCore.Wall;
-using ApiCore.Photos;
+using Newtonsoft.Json.Linq;
 using iTunesLib; //Подключаем COM-библиотеку для работы с iTunes
 using Microsoft.Win32; //Подключаем библиотеку для работы с реестром
 
@@ -32,7 +34,6 @@ namespace iTunesSVKS
     {
         // Инициализация всех переменных
         private const string AppTitle = "iTunes SVKS";
-
         private SessionInfo _sessionInfo;
         private ApiManager _manager;
 
@@ -40,6 +41,8 @@ namespace iTunesSVKS
         private string _oldstatus;
         private string _templatestatus = "[iTunes] ";
         private string _currentstatus;
+        private string _imageDirectory;
+        private string _currentSong = "";
 
         private bool _isLoggedIn;
         private bool _playlistInStatus;
@@ -51,9 +54,8 @@ namespace iTunesSVKS
 
         private StatusFactory _statusFactory;
         private WallFactory _wallFactory;
-        private PhotosFactory _photosFactory;
 
-        
+
         // Инициализация главного окна
         public MainWnd()
         {
@@ -212,8 +214,7 @@ namespace iTunesSVKS
                     customStatus.Enabled = true;
 
                     // Инициализируем переменные и записываем в них данные о композиции
-                    string artist = app.CurrentTrack.Artist;
-                    string name = app.CurrentTrack.Name;
+
                     GetCurrentSong();
                 }
 
@@ -332,19 +333,24 @@ namespace iTunesSVKS
                 iTunesApp app = new iTunesAppClass();
                 IITArtworkCollection art1 = app.CurrentTrack.Artwork;
                 IITArtwork art2 = art1[1];
-                art2.SaveArtworkToFile(String.Concat(Environment.CurrentDirectory, @"\Album.jpg"));
-                Stream r = File.Open(String.Concat(Environment.CurrentDirectory, @"\Album.jpg"), FileMode.Open);
+                art2.SaveArtworkToFile(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"));
+                Stream r = File.Open(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"), FileMode.Open);
                 Image temp = Image.FromStream(r);
                 r.Close();
                 albumArtBox.Image = temp;
+                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\Cover.jpg");
             }
             catch (Exception)
             {
                 albumArtBox.Image = Properties.Resources.art;
+                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\No_Cover.jpg");
             }
         }
 
-        // Выполняется после нажатия на кнопку «Вернуть»
+
+        /// <summary>
+        /// Возвращаем первоначальный статус
+        /// </summary>
         private void SetOriginalStatus()
         {
             try
@@ -357,30 +363,30 @@ namespace iTunesSVKS
             }
         }
 
-        // Выполняется при получении текущей композиции. Еще одна довольно затратная функция, требующая рефакторинга
+        /// <summary>
+        /// Получаем текущую композицию
+        /// </summary>
         public void GetCurrentSong()
         {
-            iTunesApp app = new iTunesAppClass(); // Вновь регистрируем iTunes, как класс приложения
+            iTunesApp app = new iTunesAppClass();
 
-            //Пробуем получить композицию
             try
             {
-                string artist = app.CurrentTrack.Artist; // Получаем исполнителя
-                string name = app.CurrentTrack.Name; // Получаем название
-                string playlist = app.CurrentTrack.Playlist.Name; // Получаем плейлист
-                int count = app.CurrentTrack.PlayedCount; // Получаем количество прослушиваний
-                string genre = app.CurrentTrack.Genre; // Получаем жанр
+                string artist = app.CurrentTrack.Artist;
+                string name = app.CurrentTrack.Name;
+                string playlist = app.CurrentTrack.Playlist.Name;
+                int count = app.CurrentTrack.PlayedCount;
+                string genre = app.CurrentTrack.Genre; 
 
                 // Соединяем исполнителя и название в одну строку (требуется пояснение и рефакторинг!)
                 string currentSong = String.Concat(artist, " - ", name); 
                 string currentSongLite = String.Concat(artist, " - ", name); // Инициализация Lite-версии композиции, которая будем показываться в трее
                 string currentSongTemp = String.Concat(artist, " - ", name);
-                string currentSongTemp2 = "";
 
-                if(currentSongTemp2 != currentSong)
+                if (_currentSong != currentSongLite)
                 {
+                    _currentSong = currentSongLite;
                     GetAlbumArt();
-                    currentSongTemp2 = currentSong;
                 }
 
                 // Если чекбокс «Плейлист» активен, то вставляем название плейлиста в статус
@@ -453,13 +459,17 @@ namespace iTunesSVKS
             }
         }
 
-        // Выполняется при нажатии на кнопку «Вернуть»
+        /// <summary>
+        /// Выполняется при нажатии на кнопку «Вернуть»
+        /// </summary>
         private void oldStatusButton_Click(object sender, EventArgs e)
         {
             SetOriginalStatus();
         }
 
-        // Выполняется при двойном клике на иконку в трее
+        /// <summary>
+        /// Выполняется при двойном клике на иконку в трее
+        /// </summary>
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Show(); // Показываем главное окно
@@ -551,8 +561,11 @@ namespace iTunesSVKS
             _coverArt = albumArtCheckBox.Checked;
         }
 
-        // Выполняется при нажатии на кнопку «Порекомендовать»
-        private void shareButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Опубликовываем запись на стене с картинкой альбома
+        /// </summary>
+        /// <param name="id">ID пользователя, где будем размещать запись</param>
+        private void Share(int id)
         {
             iTunesApp app = new iTunesAppClass(); // И снова регистрируем iTunes, как класс приложения
 
@@ -575,35 +588,114 @@ namespace iTunesSVKS
             shareText = shareText.Replace("{album}", album);
             shareText = shareText.Replace("{genre}", genre);
             shareText = shareText.Replace("{prefix}", prefix);
-            //IITArtworkCollection cc = app.CurrentTrack.Artwork;
-            
-
-            int id; // Инициализируем нужную переменную, которая будет содержать ID нужного пользователя
+            Console.WriteLine(shareText);
 
             _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
-
-            // Пробуем опубликовать на стену
             try
             {
-                id = int.Parse(idInput.Text); // Преобразуем текст из поля idInput в тип int
-                _wallFactory.Manager.Method("wall.post");
-                _wallFactory.Manager.Params("owner_id", id);
-                _wallFactory.Manager.Params("message", shareText);
-                if(_coverArt)
+                if (_coverArt)
                 {
-                    _wallFactory.Manager.Params("attachments", "photo20312161_275784815");
-                    
+                    _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
+                    _wallFactory.Manager.Method("photos.getWallUploadServer");
+                    _wallFactory.Manager.Params("uid", id);
+                    XmlNode result = _wallFactory.Manager.Execute().GetResponseXml();
+                    XmlUtils.UseNode(result);
+                    string uploadUrl = XmlUtils.String("upload_url");
+
+                    HttpUploaderFactory uf = new HttpUploaderFactory();
+                    NameValueCollection files = new NameValueCollection();
+                    files.Add("photo", _imageDirectory);
+                    string resp = uf.Upload(uploadUrl, null, files);
+                    Console.WriteLine(resp);
+                    var apiResponse = JObject.Parse(resp);
+                    string server = (string)apiResponse["server"];
+                    string photo = (string)apiResponse["photo"];
+                    string hash = (string)apiResponse["hash"];
+
+                    _wallFactory.Manager.Method("photos.saveWallPhoto");
+                    _wallFactory.Manager.Params("server", server);
+                    _wallFactory.Manager.Params("photo", photo);
+                    _wallFactory.Manager.Params("hash", hash);
+                    XmlNode result2 = _wallFactory.Manager.Execute().GetResponseXml().FirstChild;
+                    XmlUtils.UseNode(result2);
+                    string photoId = XmlUtils.String("id");
+                    Console.WriteLine(photoId);
+
+
+                    _wallFactory.Manager.Method("wall.post");
+                    _wallFactory.Manager.Params("owner_id", id);
+                    _wallFactory.Manager.Params("message", shareText);
+                    _wallFactory.Manager.Params("attachments", photoId);
+                    _wallFactory.Manager.Params("uid", id);
+                    _wallFactory.Manager.Execute();
+
                 }
-                _wallFactory.Manager.Execute();
-                //_wallFactory.Post(id, shareText); // Опубликовываем текст рекомендации на стену того ID'a, которого мы указали в поле выше
+                else
+                {
+                    _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
+                    _wallFactory.Manager.Method("wall.post");
+                    _wallFactory.Manager.Params("owner_id", id);
+                    _wallFactory.Manager.Params("message", shareText);
+                    Console.WriteLine(_wallFactory.Manager.Execute().ToString());
+                }
                 actionsStatus.Text = "Опубликовано."; // Уведомляем пользователя об успешности
                 actionsStatusTimer.Enabled = true; // Включаем таймер, который каждые n-секунд сбрасывает специальной поле статуса действий
             }
-
-            // Если неудачно, то выдаем ошибку
-            catch (Exception)
+            catch (FormatException)
             {
                 actionsStatus.Text = "Введен некорректный ID.";
+                actionsStatusTimer.Enabled = true;
+            }
+
+            catch (ApiRequestErrorException)
+            {
+                actionsStatus.Text = "Сайт вернул неверный ответ. Попробуйте изменить текст для публикации.";
+                actionsStatusTimer.Enabled = true;
+            }
+            catch (Exception)
+            {
+                actionsStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
+                actionsStatusTimer.Enabled = true;
+            }
+        }
+
+        // Выполняется при нажатии на кнопку «Порекомендовать»
+        private void shareButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = int.Parse(idInput.Text);
+                Share(id);
+            }
+            catch (FormatException)
+            {
+                try
+                {
+                    _wallFactory = new WallFactory(_manager);
+                    _wallFactory.Manager.Method("getProfiles");
+                    _wallFactory.Manager.Params("uids", idInput.Text);
+                    XmlNode result = _wallFactory.Manager.Execute().GetResponseXml().FirstChild;
+                    Console.WriteLine(result);
+                    XmlUtils.UseNode(result);
+                    int id = XmlUtils.Int("uid");
+                    Console.WriteLine(id);
+                    Share(id);
+                }
+                catch (Exception)
+                {
+                    actionsStatus.Text = "Введен некорректный ID, либо нет соединения с ВКонтакте.";
+                    actionsStatusTimer.Enabled = true;
+                }
+            }
+
+            catch (ApiRequestErrorException)
+            {
+                actionsStatus.Text = "Сайт вернул неверный ответ. Попробуйте изменить текст для публикации.";
+                actionsStatusTimer.Enabled = true;
+            }
+            catch (Exception)
+            {
+                actionsStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
                 actionsStatusTimer.Enabled = true;
             }
         }
@@ -611,48 +703,21 @@ namespace iTunesSVKS
         // Выполняется при нажатии «Поместить себе на страницу»
         private void wallSongButton_Click(object sender, EventArgs e)
         {
-            iTunesApp app = new iTunesAppClass(); // Как обычно регистрируем iTunes, как класс приложения
-
-            _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
-
-            // Получаем нужную нам информацию о композиции
-            string artist = app.CurrentTrack.Artist;
-            string name = app.CurrentTrack.Name;
-            string playlist = app.CurrentTrack.Playlist.Name;
-            string album = app.CurrentTrack.Album;
-            string genre = app.CurrentTrack.Genre;
-            string prefix = _templatestatus;
-            int count = app.CurrentTrack.PlayedCount;
-
-            string shareText = Properties.Settings.Default.messageToPost;
-
-            // Преобразуем ключевые слова
-            shareText = shareText.Replace("{name}", name);
-            shareText = shareText.Replace("{artist}", artist);
-            shareText = shareText.Replace("{playlist}", playlist);
-            shareText = shareText.Replace("{count}", count.ToString());
-            shareText = shareText.Replace("{album}", album);
-            shareText = shareText.Replace("{genre}", genre);
-            shareText = shareText.Replace("{prefix}", prefix);
-
-            // Пробуем поместить себе на стену
             try
             {
-                _wallFactory.Manager.Method("wall.post");
-                _wallFactory.Manager.Params("owner_id", int.Parse(_sessionInfo.MemberId));
-                _wallFactory.Manager.Params("message", shareText);
-                if (_coverArt)
-                {
-                    _wallFactory.Manager.Params("attachments", "photo20312161_275784815");
+                int id = int.Parse(_sessionInfo.MemberId);
+                Share(id);
 
-                }
-                _wallFactory.Manager.Execute();
-                actionsStatus.Text = "Опубликовано.";
+            }
+            catch (ApiRequestErrorException)
+            {
+                actionsStatus.Text = "Сайт вернул неверный ответ. Попробуйте изменить текст для публикации.";
                 actionsStatusTimer.Enabled = true;
             }
             catch (Exception)
             {
-                statusStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
+                actionsStatus.Text = "Нет соединения с ВКонтакте. Проверьте работоспособность интернета.";
+                actionsStatusTimer.Enabled = true;
             }
         }
 

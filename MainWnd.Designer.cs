@@ -51,9 +51,11 @@
             this.checkiTunesTimer = new System.Windows.Forms.Timer(this.components);
             this.actionsStatusTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.albumArtBox = new System.Windows.Forms.PictureBox();
             this.customText = new System.Windows.Forms.TextBox();
             this.customSet = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.albumArtCheckBox = new System.Windows.Forms.CheckBox();
             this.actionsStatus = new System.Windows.Forms.Label();
             this.idInput = new System.Windows.Forms.TextBox();
@@ -86,19 +88,17 @@
             this.friendsLabel = new System.Windows.Forms.Label();
             this.onlineLabel = new System.Windows.Forms.Label();
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.albumArtBox = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -264,6 +264,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Статус";
             // 
+            // albumArtBox
+            // 
+            this.albumArtBox.Image = global::iTunesSVKS.Properties.Resources.art;
+            this.albumArtBox.Location = new System.Drawing.Point(392, 20);
+            this.albumArtBox.Name = "albumArtBox";
+            this.albumArtBox.Size = new System.Drawing.Size(137, 137);
+            this.albumArtBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.albumArtBox.TabIndex = 27;
+            this.albumArtBox.TabStop = false;
+            // 
             // customText
             // 
             this.customText.Enabled = false;
@@ -299,6 +309,16 @@
             this.groupBox4.TabIndex = 22;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Действия";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(22, 65);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(163, 23);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "Изменить текст";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // albumArtCheckBox
             // 
@@ -635,16 +655,6 @@
             this.statusBoxCheck.Size = new System.Drawing.Size(175, 59);
             this.statusBoxCheck.TabIndex = 3;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(22, 65);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(163, 23);
-            this.button1.TabIndex = 25;
-            this.button1.Text = "Изменить текст";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Black;
@@ -655,16 +665,6 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
-            // 
-            // albumArtBox
-            // 
-            this.albumArtBox.Image = global::iTunesSVKS.Properties.Resources.art;
-            this.albumArtBox.Location = new System.Drawing.Point(392, 20);
-            this.albumArtBox.Name = "albumArtBox";
-            this.albumArtBox.Size = new System.Drawing.Size(137, 137);
-            this.albumArtBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.albumArtBox.TabIndex = 27;
-            this.albumArtBox.TabStop = false;
             // 
             // MainWnd
             // 
@@ -693,6 +693,7 @@
             this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -702,7 +703,6 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
