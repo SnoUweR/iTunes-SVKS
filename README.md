@@ -25,7 +25,6 @@ Russian
 3. Добавить возможность ввода капчи, если требуется
 
 
-
 ### Использование:
 
 1. Запустить Checker.exe
@@ -34,12 +33,19 @@ Russian
 4. ???????
 5. PROFIT
 
+
+### Благодарности:
+* <b>Руслан Степанов</b> - за его постоянные советы, помощь, а также тестирование. Если бы не он, то многого 
+бы в ней и не было.
+* <b>xternalx</b> - За его библиотеку «VK API for .NET» (ApiCore.dll), класс HttpUploaderFactory.cs, а также всяческую помощь в реализации некоторых вещей.
+
+
 ### Другая информация:
 
 Требуется помощь сторонних программистов. Если хотите поучаствовать в проекте, то пишите мне в ЛС.
 Исходный код выкладывается под лицензией MIT.
 
-Программа использует «VK API for .NET» (ApiCore.dll), которое разработано [xternalx](xternalx.com).
+Программа использует «VK API for .NET» (ApiCore.dll), которое разработано [xternalx](http://www.xternalx.com).
 
 ---
 English
@@ -73,8 +79,14 @@ The program allows you to receive information about listening to a song in iTune
 4. ??????? 
 5. PROFIT 
 
+### Thanks to:
+* <b>Ruslan Stepanov</b> - for his continued advice, support and testing. If it were not him, much
+would it never happened.
+* <b>Xternalx</b> - For his library «VK API for. NET» (ApiCore.dll), class HttpUploaderFactory.cs, as well as all the assistance in the implementation of certain things.
+
+
 ### Other Info:
 
 The source code is licensed under the MIT. 
 
-The program uses «VK API for. NET» (ApiCore.dll) by [xternalx](xternalx.com). 
+The program uses «VK API for. NET» (ApiCore.dll) by [xternalx](http://www.xternalx.com). 
