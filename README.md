@@ -9,8 +9,8 @@ Russian
 
 ### Возможности:
 
-* Получать полную информацию о прослушиваемой композиции, за исключением, наверное, картинки альбома
-* Рекомендовать песню друзьям и помещать её на свою стену в виде текста
+* Получать полную информацию о прослушиваемой композиции
+* Рекомендовать песню друзьям и помещать её на свою стену в виде текста и обложки альбома
 * Ставить префикс к статусу
 * Устанавливать статус по встроенным шаблонам, либо по своему
 * Получать первоначальный статус и восстанавливать его, при необходимости
@@ -22,7 +22,8 @@ Russian
 
 1. Исправить большинство багов
 2. Привлечь к разработке других программистов
-3. Написать unit-тесты к iTunes SVKS
+3. Добавить возможность ввода капчи, если требуется
+
 
 
 ### Использование:
@@ -49,7 +50,7 @@ The program allows you to receive information about listening to a song in iTune
 
 ### Features: 
 
-* Receive complete information about current song, except, perhaps, the album art 
+* Receive complete information about current song
 * Recommend to friends current song and share him on your wall
 * Putting a prefix to the status
 * Set status on built-in templates, or by your custom template 
@@ -61,7 +62,7 @@ The program allows you to receive information about listening to a song in iTune
 
 1. Fix most bugs 
 2. Engage in the development other programmers
-3. Write unit-tests to iTunes SVKS 
+3. Add the ability to input CAPTCHAs, if required
 
 
 ### Uses: 
