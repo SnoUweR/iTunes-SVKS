@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
@@ -202,7 +203,15 @@ namespace Checker
         // При нажатии на «Закрыть», неожиданно, закрываем окно
         private void runButton_Click(object sender, EventArgs e)
         {
-            Close();
+            try
+            {
+                Process.Start("iTunesSVKS.exe");
+            }
+            catch (Exception)
+            {
+
+            }
+            Application.Exit();
         }
 
         // Создаем запись в реестре
