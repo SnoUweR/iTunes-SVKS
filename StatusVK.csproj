@@ -97,6 +97,12 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Captcha.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Captcha.Designer.cs">
+      <DependentUpon>Captcha.cs</DependentUpon>
+    </Compile>
     <Compile Include="HttpUploaderFactory.cs" />
     <Compile Include="MainWnd.cs">
       <SubType>Form</SubType>
@@ -114,6 +120,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Captcha.resx">
+      <DependentUpon>Captcha.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWnd.resx">
       <DependentUpon>MainWnd.cs</DependentUpon>

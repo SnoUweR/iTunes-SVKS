@@ -106,7 +106,7 @@ namespace iTunesSVKS
             }
             catch (Exception)
             {
-                e.Cancel = true; // Если произошла какая-то ошибка, то не даем программе завершиться. Надо изменить функцию, ибо это неверно
+                
             }
         }
 
@@ -308,6 +308,9 @@ namespace iTunesSVKS
                     if (_newstatus != _currentstatus)
                     {
                         _statusFactory.Set(_newstatus); // Устанавливаем новый статус
+                        //_statusFactory.Manager.Method("status.set");
+                        //_statusFactory.Manager.Params("text", _newstatus);
+                        //Console.WriteLine(_statusFactory.Manager.Execute().GetResponseJson().ToString());
                         _currentstatus = _newstatus;
                     }
                 }
@@ -838,35 +841,39 @@ namespace iTunesSVKS
                 // Неуспешно..
                 else
                 {
-                    // Показываем предупреждение, но даем пользователю возможность продолжить работу с программой
-                  DialogResult result = MessageBox.Show(
-                        "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
-                        "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                    if (result == DialogResult.OK)
-                    {
-                        Application.Exit(); // Если пользователь не хочет рисковать, то закрываем это всё
-                    }
-                    else
-                    {
-                        Reauth(); // Если пользователь рискнул, то логинимся
-                    }
+                    NoConfig();
                 }
             }
 
             // Ловим ошибку и выполняем всё то же, что и при else
             catch (Exception)
             {
-                DialogResult result = MessageBox.Show(
-      "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
-      "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.OK)
+                NoConfig();
+            }
+        }
+
+        private void NoConfig()
+        {
+            // Показываем предупреждение, но даем пользователю возможность продолжить работу с программой
+            DialogResult result = MessageBox.Show(
+                  "iTunes SVKS не сконфигурирован. Возможна нестабильная работа. Для проверки конфигурации запустите Checker.exe",
+                  "Не обнаружены нужные записи в реестре", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (result == DialogResult.OK)
+            {
+                try
                 {
-                    Application.Exit();
+                    Process.Start("Checker.exe");
                 }
-                else
+                catch (Exception)
                 {
-                    Reauth();
+
                 }
+                Application.Exit(); // Если пользователь не хочет рисковать, то закрываем это всё
+
+            }
+            else
+            {
+                Reauth(); // Если пользователь рискнул, то логинимся
             }
         }
 

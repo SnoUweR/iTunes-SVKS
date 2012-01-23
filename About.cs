@@ -31,5 +31,10 @@ namespace iTunesSVKS
         {
             System.Diagnostics.Process.Start("http://snouwer.ru");
         }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://isvks.snouwer.ru");
+        }
     }
 }

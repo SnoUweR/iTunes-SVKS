@@ -46,6 +46,7 @@ Russian
 Исходный код выкладывается под лицензией MIT.
 
 Программа использует «VK API for .NET» (ApiCore.dll), которое разработано [xternalx](http://www.xternalx.com).
+[Официальный сайт](http://isvks.snouwer.ru).
 
 ---
 English
@@ -90,3 +91,4 @@ would it never happened.
 The source code is licensed under the MIT. 
 
 The program uses «VK API for. NET» (ApiCore.dll) by [xternalx](http://www.xternalx.com). 
+[Official Site](http://isvks.snouwer.ru).
