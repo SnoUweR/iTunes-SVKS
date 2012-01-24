@@ -116,24 +116,34 @@ namespace Checker
 
                 else
                 {
-                    _iTunesInstalled = false;
-                    nextStep.Text = "Пропустить";
-                    mainLabel.Text = "iTunes не найден. Возможно он не установлен на вашей системе, либо установлен неправильно.";
-                    otherLabel.Visible = true;
-                    otherLabel.Text =
-                        "Рекомендуется установить/переустановить iTunes. Вы можете продолжить, но стабильная работа программы не гарантируется.";
+                    NoItunes();
                 }
 
             }
             catch (Exception)
             {
-                _iTunesInstalled = false;
-                nextStep.Text = "Пропустить";
-                mainLabel.Text = "iTunes не найден. Возможно он не установлен на вашей системе, либо установлен неправильно.";
-                otherLabel.Visible = true;
-                otherLabel.Text =
-                    "Рекомендуется установить/переустановить iTunes. \n Вы можете пропустить этот шаг, но стабильная работа программы не гарантируется.";
+                NoItunes();
             }
+        }
+
+        private void NoItunes()
+        {
+            _iTunesInstalled = false;
+            nextStep.Text = "Пропустить";
+            mainLabel.Text = "iTunes не найден. Возможно он не установлен на вашей системе, либо установлен неправильно.";
+            otherLabel.Visible = true;
+            otherLabel.Text =
+                "Рекомендуется установить/переустановить iTunes. \n Вы можете пропустить этот шаг, но стабильная работа программы не гарантируется.";
+        }
+
+        private void NoInternet()
+        {
+            _internetStatus = false;
+            nextStep.Text = "Пропустить";
+            mainLabel.Text = "Настройщик не смог соединиться с VK.com. \n \n Возможно сайт попросту недоступен, но, на всякий случай \n проверьте соединение с интернетом.";
+            otherLabel.Visible = true;
+            otherLabel.Text =
+                "Проверьте настройки интернета. \n Вы можете пропустить этот шаг, но стабильная работа программы не гарантируется.";
         }
 
         // Проверяем наличие соединения к VK.com (попросту говоря, пингуем сайт)
@@ -150,7 +160,7 @@ namespace Checker
 
                 string data = "InatrailoffireIknowWewillbefreeagain"; // Формируем строку, которую отправим
                 byte[] buffer = Encoding.ASCII.GetBytes(data); // Кодируем строку в ASCII (не?)
-                int timeout = 300; // Устанавливаем таймаут
+                int timeout = 500; // Устанавливаем таймаут
                 PingReply reply = pingSender.Send("vk.com", timeout, buffer, options); // Пингуем!
 
                 // Если ответ получен, то..
@@ -163,24 +173,14 @@ namespace Checker
                 // А если не получен..
                 else
                 {
-                    _internetStatus = false;
-                    nextStep.Text = "Пропустить";
-                    mainLabel.Text = "Настройщик не смог соединиться с VK.com. \n \n Возможно сайт попросту недоступен, но, на всякий случай \n проверьте соединение с интернетом.";
-                    otherLabel.Visible = true;
-                    otherLabel.Text =
-                        "Проверьте настройки интернета. \n Вы можете пропустить этот шаг, но стабильная работа программы не гарантируется.";
+                    NoInternet();
                 }
             }
 
             // Если произошла ошибка..        
             catch (Exception)
             {
-                _internetStatus = false;
-                nextStep.Text = "Пропустить";
-                mainLabel.Text = "Настройщик не смог соединиться с VK.com. \n \n Возможно сайт попросту недоступен, но, на всякий случай \n проверьте соединение с интернетом.";
-                otherLabel.Visible = true;
-                otherLabel.Text =
-                    "Проверьте настройки интернета. \n Вы можете пропустить этот шаг, но стабильная работа программы не гарантируется.";
+                NoInternet();
             }
         }
 
@@ -223,6 +223,7 @@ namespace Checker
             RegistryKey keyS = Registry.CurrentUser.OpenSubKey("Software\\iTunesSVKS", true);
             keyS.OpenSubKey("Software\\iTunesSVKS", true);
             keyS.SetValue("Installed", "1");
+            keyS.SetValue("Version", "R3");
             keyS.Close();
         }
     }
