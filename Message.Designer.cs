@@ -56,11 +56,11 @@
             this.textBox3.Location = new System.Drawing.Point(6, 19);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(169, 90);
             this.textBox3.TabIndex = 0;
             this.textBox3.Text = "{name} - Название песни\r\n{artist} - Исполнитель песни\r\n{playlist} - Плейлист\r\n{al" +
-    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{genre} - Жанр\r\n{prefix} - Префи" +
-    "кс";
+    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{genre} - Жанр";
             // 
             // groupBox1
             // 
@@ -112,6 +112,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Message";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Текст для рекомендации";
             this.Load += new System.EventHandler(this.Message_Load);
             this.groupBox2.ResumeLayout(false);
