@@ -1,4 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
@@ -15,26 +22,24 @@
 
 namespace iTunesSVKS
 {
-    partial class About : Form
+    public partial class NewVersionAvailable : Form
     {
-        public About()
+        private string dUrl;
+
+        public NewVersionAvailable(string releaseNotes, string version, string downloadUrl)
         {
             InitializeComponent();
+            this.Name = "iTunes SVKS " + version;
+            label1.Text = String.Format("iTunes SVKS {0} доступен для загрузки.", version);
+            richTextBox1.Text = releaseNotes;
+            dUrl = downloadUrl;
+            pictureBox1.Image = SystemIcons.Information.ToBitmap();
         }
 
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://xternalx.com");
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://me.snouwer.ru");
-        }
-
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://isvks.snouwer.ru");
+            System.Diagnostics.Process.Start(dUrl);
+            this.Close();
         }
     }
 }

@@ -9,6 +9,8 @@ using System.IO;
 
 namespace iTunesSVKS
 {
+    // Все копирайты принадлежат xternalx
+
     public delegate void HttpUploaderFormProgressHandler(object sender, UploadFormProgressEventArgs e);
     public class UploadFormProgressEventArgs : EventArgs
     {

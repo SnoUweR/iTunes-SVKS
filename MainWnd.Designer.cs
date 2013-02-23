@@ -49,34 +49,22 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.checkiTunesTimer = new System.Windows.Forms.Timer(this.components);
-            this.actionsStatusTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.albumArtBox = new System.Windows.Forms.PictureBox();
+            this.songArtistLabel = new System.Windows.Forms.Label();
+            this.songNameLabel = new System.Windows.Forms.Label();
+            this.loadArtLastFM = new System.Windows.Forms.Button();
             this.customText = new System.Windows.Forms.TextBox();
-            this.customSet = new System.Windows.Forms.Button();
+            this.autoUpdCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.comboBFriends = new System.Windows.Forms.ComboBox();
+            this.changeShareTextBtn = new System.Windows.Forms.Button();
             this.albumArtCheckBox = new System.Windows.Forms.CheckBox();
-            this.actionsStatus = new System.Windows.Forms.Label();
-            this.idInput = new System.Windows.Forms.TextBox();
             this.shareButton = new System.Windows.Forms.Button();
             this.wallSongButton = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.genreCheck = new System.Windows.Forms.CheckBox();
-            this.customStatus = new System.Windows.Forms.CheckBox();
-            this.statusStatus = new System.Windows.Forms.Label();
-            this.showTipsCheck = new System.Windows.Forms.CheckBox();
-            this.setTemplateButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.countCheck = new System.Windows.Forms.CheckBox();
-            this.playlistUse = new System.Windows.Forms.CheckBox();
-            this.templateForStatus = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.setStatusButton = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.oldStatusButton = new System.Windows.Forms.Button();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.idToCheck = new System.Windows.Forms.TextBox();
@@ -89,26 +77,32 @@
             this.onlineLabel = new System.Windows.Forms.Label();
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.actionsStatus = new System.Windows.Forms.RichTextBox();
+            this.checkUpdatesToolStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).BeginInit();
             this.groupBox4.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainToolStripMenuItem,
-            this.supportMenuItem});
+            this.supportMenuItem,
+            this.checkUpdatesToolStripMenu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(559, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(526, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -190,9 +184,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.iTunesStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 625);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 594);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(559, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(526, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
@@ -243,119 +237,142 @@
             this.checkiTunesTimer.Interval = 10000;
             this.checkiTunesTimer.Tick += new System.EventHandler(this.checkiTunesTimer_Tick);
             // 
-            // actionsStatusTimer
-            // 
-            this.actionsStatusTimer.Interval = 5000;
-            this.actionsStatusTimer.Tick += new System.EventHandler(this.actionsStatusTimer_Tick);
-            // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.albumArtBox);
-            this.groupBox1.Controls.Add(this.customText);
-            this.groupBox1.Controls.Add(this.customSet);
-            this.groupBox1.Controls.Add(this.groupBox4);
-            this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Controls.Add(this.textBox2);
-            this.groupBox1.Controls.Add(this.setStatusButton);
+            this.groupBox1.Controls.Add(this.panel1);
+            this.groupBox1.Controls.Add(this.songArtistLabel);
+            this.groupBox1.Controls.Add(this.songNameLabel);
+            this.groupBox1.Controls.Add(this.loadArtLastFM);
             this.groupBox1.Location = new System.Drawing.Point(12, 97);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(535, 402);
+            this.groupBox1.Size = new System.Drawing.Size(504, 213);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Статус";
+            this.groupBox1.Text = "Композиция";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Gainsboro;
+            this.panel1.Controls.Add(this.albumArtBox);
+            this.panel1.Location = new System.Drawing.Point(335, 13);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(165, 165);
+            this.panel1.TabIndex = 31;
             // 
             // albumArtBox
             // 
             this.albumArtBox.Image = global::iTunesSVKS.Properties.Resources.art;
-            this.albumArtBox.Location = new System.Drawing.Point(392, 20);
+            this.albumArtBox.Location = new System.Drawing.Point(5, 5);
             this.albumArtBox.Name = "albumArtBox";
-            this.albumArtBox.Size = new System.Drawing.Size(137, 137);
+            this.albumArtBox.Size = new System.Drawing.Size(155, 155);
             this.albumArtBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.albumArtBox.TabIndex = 27;
             this.albumArtBox.TabStop = false;
             // 
+            // songArtistLabel
+            // 
+            this.songArtistLabel.Location = new System.Drawing.Point(10, 145);
+            this.songArtistLabel.Name = "songArtistLabel";
+            this.songArtistLabel.Size = new System.Drawing.Size(313, 48);
+            this.songArtistLabel.TabIndex = 30;
+            this.songArtistLabel.Text = "Нет автора";
+            this.songArtistLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // songNameLabel
+            // 
+            this.songNameLabel.AutoEllipsis = true;
+            this.songNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.songNameLabel.Location = new System.Drawing.Point(10, 86);
+            this.songNameLabel.Name = "songNameLabel";
+            this.songNameLabel.Size = new System.Drawing.Size(307, 59);
+            this.songNameLabel.TabIndex = 28;
+            this.songNameLabel.Text = "Нет композиции";
+            this.songNameLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // loadArtLastFM
+            // 
+            this.loadArtLastFM.Enabled = false;
+            this.loadArtLastFM.Location = new System.Drawing.Point(335, 184);
+            this.loadArtLastFM.Name = "loadArtLastFM";
+            this.loadArtLastFM.Size = new System.Drawing.Size(165, 23);
+            this.loadArtLastFM.TabIndex = 29;
+            this.loadArtLastFM.Text = "Загрузить с LastFM";
+            this.loadArtLastFM.UseVisualStyleBackColor = true;
+            this.loadArtLastFM.Click += new System.EventHandler(this.loadArtLastFM_Click);
+            // 
             // customText
             // 
             this.customText.Enabled = false;
-            this.customText.Location = new System.Drawing.Point(6, 87);
+            this.customText.Location = new System.Drawing.Point(6, 19);
             this.customText.Multiline = true;
             this.customText.Name = "customText";
-            this.customText.Size = new System.Drawing.Size(380, 39);
+            this.customText.Size = new System.Drawing.Size(311, 46);
             this.customText.TabIndex = 26;
+            this.customText.Text = "Сейчас прослушиваю {artist} - {name} via iTunes";
             this.customText.TextChanged += new System.EventHandler(this.customText_TextChanged);
             // 
-            // customSet
+            // autoUpdCheckBox
             // 
-            this.customSet.Enabled = false;
-            this.customSet.Location = new System.Drawing.Point(277, 132);
-            this.customSet.Name = "customSet";
-            this.customSet.Size = new System.Drawing.Size(109, 23);
-            this.customSet.TabIndex = 25;
-            this.customSet.Text = "Предпросмотр";
-            this.customSet.UseVisualStyleBackColor = true;
-            this.customSet.Click += new System.EventHandler(this.customSet_Click);
+            this.autoUpdCheckBox.AutoSize = true;
+            this.autoUpdCheckBox.Enabled = false;
+            this.autoUpdCheckBox.Location = new System.Drawing.Point(103, 121);
+            this.autoUpdCheckBox.Name = "autoUpdCheckBox";
+            this.autoUpdCheckBox.Size = new System.Drawing.Size(104, 17);
+            this.autoUpdCheckBox.TabIndex = 7;
+            this.autoUpdCheckBox.Text = "Автоматически";
+            this.autoUpdCheckBox.UseVisualStyleBackColor = true;
+            this.autoUpdCheckBox.CheckedChanged += new System.EventHandler(this.autoUpdCheckBox_CheckedChanged);
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.button1);
+            this.groupBox4.Controls.Add(this.comboBFriends);
+            this.groupBox4.Controls.Add(this.changeShareTextBtn);
             this.groupBox4.Controls.Add(this.albumArtCheckBox);
-            this.groupBox4.Controls.Add(this.actionsStatus);
-            this.groupBox4.Controls.Add(this.idInput);
             this.groupBox4.Controls.Add(this.shareButton);
             this.groupBox4.Controls.Add(this.wallSongButton);
-            this.groupBox4.Location = new System.Drawing.Point(326, 163);
+            this.groupBox4.Location = new System.Drawing.Point(342, 316);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(203, 233);
+            this.groupBox4.Size = new System.Drawing.Size(174, 155);
             this.groupBox4.TabIndex = 22;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Действия";
+            this.groupBox4.Text = "Поделиться";
             // 
-            // button1
+            // comboBFriends
             // 
-            this.button1.Location = new System.Drawing.Point(22, 65);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(163, 23);
-            this.button1.TabIndex = 25;
-            this.button1.Text = "Изменить текст";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.comboBFriends.Enabled = false;
+            this.comboBFriends.FormattingEnabled = true;
+            this.comboBFriends.Location = new System.Drawing.Point(6, 19);
+            this.comboBFriends.Name = "comboBFriends";
+            this.comboBFriends.Size = new System.Drawing.Size(161, 21);
+            this.comboBFriends.TabIndex = 27;
+            this.comboBFriends.Text = "Выберите друга";
+            this.comboBFriends.SelectedIndexChanged += new System.EventHandler(this.comboBFriends_SelectedIndexChanged);
+            // 
+            // changeShareTextBtn
+            // 
+            this.changeShareTextBtn.Location = new System.Drawing.Point(5, 69);
+            this.changeShareTextBtn.Name = "changeShareTextBtn";
+            this.changeShareTextBtn.Size = new System.Drawing.Size(163, 23);
+            this.changeShareTextBtn.TabIndex = 25;
+            this.changeShareTextBtn.Text = "Изменить текст";
+            this.changeShareTextBtn.UseVisualStyleBackColor = true;
+            this.changeShareTextBtn.Click += new System.EventHandler(this.changeShareTextBtn_Click);
             // 
             // albumArtCheckBox
             // 
             this.albumArtCheckBox.AutoSize = true;
-            this.albumArtCheckBox.Location = new System.Drawing.Point(22, 139);
+            this.albumArtCheckBox.Location = new System.Drawing.Point(6, 127);
             this.albumArtCheckBox.Name = "albumArtCheckBox";
-            this.albumArtCheckBox.Size = new System.Drawing.Size(136, 17);
+            this.albumArtCheckBox.Size = new System.Drawing.Size(133, 17);
             this.albumArtCheckBox.TabIndex = 24;
-            this.albumArtCheckBox.Text = "Прикрепить картинку";
+            this.albumArtCheckBox.Text = "Прикрепить обложку";
             this.albumArtCheckBox.UseVisualStyleBackColor = true;
             this.albumArtCheckBox.CheckedChanged += new System.EventHandler(this.albumArtCheckBox_CheckedChanged);
-            // 
-            // actionsStatus
-            // 
-            this.actionsStatus.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.actionsStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.actionsStatus.Enabled = false;
-            this.actionsStatus.ForeColor = System.Drawing.Color.Black;
-            this.actionsStatus.Location = new System.Drawing.Point(6, 170);
-            this.actionsStatus.Name = "actionsStatus";
-            this.actionsStatus.Size = new System.Drawing.Size(191, 60);
-            this.actionsStatus.TabIndex = 23;
-            this.actionsStatus.Text = "Выберите необходимое действие.";
-            // 
-            // idInput
-            // 
-            this.idInput.Enabled = false;
-            this.idInput.Location = new System.Drawing.Point(22, 23);
-            this.idInput.Name = "idInput";
-            this.idInput.Size = new System.Drawing.Size(163, 20);
-            this.idInput.TabIndex = 22;
-            this.idInput.TextChanged += new System.EventHandler(this.idInput_TextChanged);
             // 
             // shareButton
             // 
             this.shareButton.Enabled = false;
-            this.shareButton.Location = new System.Drawing.Point(22, 42);
+            this.shareButton.Location = new System.Drawing.Point(5, 42);
             this.shareButton.Name = "shareButton";
             this.shareButton.Size = new System.Drawing.Size(163, 23);
             this.shareButton.TabIndex = 20;
@@ -366,201 +383,41 @@
             // wallSongButton
             // 
             this.wallSongButton.Enabled = false;
-            this.wallSongButton.Location = new System.Drawing.Point(22, 108);
+            this.wallSongButton.Location = new System.Drawing.Point(5, 98);
             this.wallSongButton.Name = "wallSongButton";
-            this.wallSongButton.Size = new System.Drawing.Size(163, 25);
+            this.wallSongButton.Size = new System.Drawing.Size(163, 23);
             this.wallSongButton.TabIndex = 21;
             this.wallSongButton.Text = "Поместить себе на страницу";
             this.wallSongButton.UseVisualStyleBackColor = true;
             this.wallSongButton.Click += new System.EventHandler(this.wallSongButton_Click);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.genreCheck);
-            this.groupBox2.Controls.Add(this.customStatus);
-            this.groupBox2.Controls.Add(this.statusStatus);
-            this.groupBox2.Controls.Add(this.showTipsCheck);
-            this.groupBox2.Controls.Add(this.setTemplateButton);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Controls.Add(this.countCheck);
-            this.groupBox2.Controls.Add(this.playlistUse);
-            this.groupBox2.Controls.Add(this.templateForStatus);
-            this.groupBox2.Location = new System.Drawing.Point(6, 163);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(314, 233);
-            this.groupBox2.TabIndex = 19;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Параметры";
-            // 
-            // genreCheck
-            // 
-            this.genreCheck.AutoSize = true;
-            this.genreCheck.Enabled = false;
-            this.genreCheck.Location = new System.Drawing.Point(6, 127);
-            this.genreCheck.Name = "genreCheck";
-            this.genreCheck.Size = new System.Drawing.Size(55, 17);
-            this.genreCheck.TabIndex = 21;
-            this.genreCheck.Text = "Жанр";
-            this.genreCheck.UseVisualStyleBackColor = true;
-            this.genreCheck.CheckedChanged += new System.EventHandler(this.genreCheck_CheckedChanged);
-            // 
-            // customStatus
-            // 
-            this.customStatus.AutoSize = true;
-            this.customStatus.Enabled = false;
-            this.customStatus.Location = new System.Drawing.Point(6, 39);
-            this.customStatus.Name = "customStatus";
-            this.customStatus.Size = new System.Drawing.Size(51, 17);
-            this.customStatus.TabIndex = 20;
-            this.customStatus.Text = "Свой";
-            this.customStatus.UseVisualStyleBackColor = true;
-            this.customStatus.CheckedChanged += new System.EventHandler(this.customStatus_CheckedChanged);
-            // 
-            // statusStatus
-            // 
-            this.statusStatus.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.statusStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.statusStatus.Enabled = false;
-            this.statusStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.statusStatus.ForeColor = System.Drawing.Color.Black;
-            this.statusStatus.Location = new System.Drawing.Point(6, 170);
-            this.statusStatus.Name = "statusStatus";
-            this.statusStatus.Size = new System.Drawing.Size(302, 60);
-            this.statusStatus.TabIndex = 18;
-            this.statusStatus.Text = "Всё работает корректно.";
-            // 
-            // showTipsCheck
-            // 
-            this.showTipsCheck.AutoSize = true;
-            this.showTipsCheck.Location = new System.Drawing.Point(6, 150);
-            this.showTipsCheck.Name = "showTipsCheck";
-            this.showTipsCheck.Size = new System.Drawing.Size(174, 17);
-            this.showTipsCheck.TabIndex = 19;
-            this.showTipsCheck.Text = "Не показывать уведомления";
-            this.showTipsCheck.UseVisualStyleBackColor = true;
-            this.showTipsCheck.CheckedChanged += new System.EventHandler(this.showTipsCheck_CheckedChanged);
-            // 
-            // setTemplateButton
-            // 
-            this.setTemplateButton.Location = new System.Drawing.Point(225, 65);
-            this.setTemplateButton.Name = "setTemplateButton";
-            this.setTemplateButton.Size = new System.Drawing.Size(81, 23);
-            this.setTemplateButton.TabIndex = 11;
-            this.setTemplateButton.Text = "Установить";
-            this.setTemplateButton.UseVisualStyleBackColor = true;
-            this.setTemplateButton.Click += new System.EventHandler(this.setTemplateButton_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(115, 23);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
-            this.label2.TabIndex = 17;
-            this.label2.Text = "Префикс";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(6, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(81, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Обновлять";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // countCheck
-            // 
-            this.countCheck.AutoSize = true;
-            this.countCheck.Enabled = false;
-            this.countCheck.Location = new System.Drawing.Point(6, 106);
-            this.countCheck.Name = "countCheck";
-            this.countCheck.Size = new System.Drawing.Size(66, 17);
-            this.countCheck.TabIndex = 16;
-            this.countCheck.Text = "Счетчик";
-            this.countCheck.UseVisualStyleBackColor = true;
-            this.countCheck.CheckedChanged += new System.EventHandler(this.countCheck_CheckedChanged);
-            // 
-            // playlistUse
-            // 
-            this.playlistUse.AutoSize = true;
-            this.playlistUse.Enabled = false;
-            this.playlistUse.Location = new System.Drawing.Point(6, 83);
-            this.playlistUse.Name = "playlistUse";
-            this.playlistUse.Size = new System.Drawing.Size(75, 17);
-            this.playlistUse.TabIndex = 13;
-            this.playlistUse.Text = "Плейлист";
-            this.playlistUse.UseVisualStyleBackColor = true;
-            this.playlistUse.CheckedChanged += new System.EventHandler(this.playlistUse_CheckedChanged);
-            // 
-            // templateForStatus
-            // 
-            this.templateForStatus.Location = new System.Drawing.Point(118, 39);
-            this.templateForStatus.Name = "templateForStatus";
-            this.templateForStatus.Size = new System.Drawing.Size(188, 20);
-            this.templateForStatus.TabIndex = 9;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(6, 19);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(380, 33);
-            this.textBox2.TabIndex = 14;
-            // 
             // setStatusButton
             // 
             this.setStatusButton.Enabled = false;
-            this.setStatusButton.Location = new System.Drawing.Point(305, 58);
+            this.setStatusButton.Location = new System.Drawing.Point(213, 119);
             this.setStatusButton.Name = "setStatusButton";
-            this.setStatusButton.Size = new System.Drawing.Size(81, 23);
+            this.setStatusButton.Size = new System.Drawing.Size(104, 23);
             this.setStatusButton.TabIndex = 4;
-            this.setStatusButton.Text = "Установить";
+            this.setStatusButton.Text = "Обновить";
             this.setStatusButton.UseVisualStyleBackColor = true;
             this.setStatusButton.Click += new System.EventHandler(this.setStatusButton_Click);
             // 
-            // groupBox3
+            // textBox2
             // 
-            this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Controls.Add(this.oldStatusButton);
-            this.groupBox3.Location = new System.Drawing.Point(12, 499);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(320, 116);
-            this.groupBox3.TabIndex = 19;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Первоначальный статус";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(6, 19);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(306, 59);
-            this.textBox1.TabIndex = 3;
-            // 
-            // oldStatusButton
-            // 
-            this.oldStatusButton.Enabled = false;
-            this.oldStatusButton.Location = new System.Drawing.Point(198, 84);
-            this.oldStatusButton.Name = "oldStatusButton";
-            this.oldStatusButton.Size = new System.Drawing.Size(114, 23);
-            this.oldStatusButton.TabIndex = 8;
-            this.oldStatusButton.Text = "Вернуть";
-            this.oldStatusButton.UseVisualStyleBackColor = true;
-            this.oldStatusButton.Click += new System.EventHandler(this.oldStatusButton_Click);
+            this.textBox2.Enabled = false;
+            this.textBox2.Location = new System.Drawing.Point(6, 71);
+            this.textBox2.Multiline = true;
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(311, 44);
+            this.textBox2.TabIndex = 14;
             // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.textBox3);
-            this.groupBox5.Enabled = false;
-            this.groupBox5.Location = new System.Drawing.Point(338, 499);
+            this.groupBox5.Location = new System.Drawing.Point(12, 477);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(209, 116);
+            this.groupBox5.Size = new System.Drawing.Size(207, 110);
             this.groupBox5.TabIndex = 20;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Обозначения";
@@ -576,8 +433,7 @@
             this.textBox3.Size = new System.Drawing.Size(190, 90);
             this.textBox3.TabIndex = 0;
             this.textBox3.Text = "{name} - Название песни\r\n{artist} - Исполнитель песни\r\n{playlist} - Плейлист\r\n{al" +
-    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{genre} - Жанр\r\n{prefix} - Префи" +
-    "кс";
+    "bum} - Альбом\r\n{count} - Количество исполнений\r\n{genre} - Жанр";
             // 
             // idToCheck
             // 
@@ -661,22 +517,66 @@
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 27);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(559, 64);
+            this.pictureBox1.Size = new System.Drawing.Size(526, 64);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.customText);
+            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.setStatusButton);
+            this.groupBox2.Controls.Add(this.autoUpdCheckBox);
+            this.groupBox2.Location = new System.Drawing.Point(12, 316);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(323, 155);
+            this.groupBox2.TabIndex = 30;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Шаблон";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.actionsStatus);
+            this.groupBox3.Location = new System.Drawing.Point(225, 477);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(291, 110);
+            this.groupBox3.TabIndex = 31;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Консоль ошибок";
+            // 
+            // actionsStatus
+            // 
+            this.actionsStatus.BackColor = System.Drawing.Color.Black;
+            this.actionsStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.actionsStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.actionsStatus.Location = new System.Drawing.Point(3, 16);
+            this.actionsStatus.Name = "actionsStatus";
+            this.actionsStatus.ReadOnly = true;
+            this.actionsStatus.Size = new System.Drawing.Size(285, 91);
+            this.actionsStatus.TabIndex = 31;
+            this.actionsStatus.Text = "";
+            // 
+            // checkUpdatesToolStripMenu
+            // 
+            this.checkUpdatesToolStripMenu.Name = "checkUpdatesToolStripMenu";
+            this.checkUpdatesToolStripMenu.Size = new System.Drawing.Size(149, 20);
+            this.checkUpdatesToolStripMenu.Text = "Проверить обновления";
+            this.checkUpdatesToolStripMenu.Click += new System.EventHandler(this.checkUpdatesToolStripMenu_Click);
             // 
             // MainWnd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(559, 647);
+            this.ClientSize = new System.Drawing.Size(526, 616);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.groupBox3);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -692,17 +592,16 @@
             this.statusStrip1.PerformLayout();
             this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.albumArtBox)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -726,34 +625,18 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitContextMenu;
         private System.Windows.Forms.ToolStripMenuItem updateStripMenu;
-        private System.Windows.Forms.Timer actionsStatusTimer;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox customText;
-        private System.Windows.Forms.Button customSet;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Label actionsStatus;
-        private System.Windows.Forms.TextBox idInput;
         private System.Windows.Forms.Button shareButton;
         private System.Windows.Forms.Button wallSongButton;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox customStatus;
-        private System.Windows.Forms.Label statusStatus;
-        private System.Windows.Forms.CheckBox showTipsCheck;
-        private System.Windows.Forms.Button setTemplateButton;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox countCheck;
-        private System.Windows.Forms.CheckBox playlistUse;
-        private System.Windows.Forms.TextBox templateForStatus;
+        private System.Windows.Forms.CheckBox autoUpdCheckBox;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button setStatusButton;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button oldStatusButton;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox idToCheck;
@@ -766,9 +649,17 @@
         private System.Windows.Forms.Label onlineLabel;
         private System.Windows.Forms.TextBox statusBoxCheck;
         private System.Windows.Forms.CheckBox albumArtCheckBox;
-        private System.Windows.Forms.CheckBox genreCheck;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button changeShareTextBtn;
         private System.Windows.Forms.PictureBox albumArtBox;
+        private System.Windows.Forms.ComboBox comboBFriends;
+        private System.Windows.Forms.Label songNameLabel;
+        private System.Windows.Forms.Button loadArtLastFM;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label songArtistLabel;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RichTextBox actionsStatus;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem checkUpdatesToolStripMenu;
     }
 }
 

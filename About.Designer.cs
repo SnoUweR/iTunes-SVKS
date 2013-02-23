@@ -40,11 +40,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(128, 9);
+            this.label1.Location = new System.Drawing.Point(147, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 13);
+            this.label1.Size = new System.Drawing.Size(88, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "iTunes SVKS Alpha (R3)";
+            this.label1.Text = "iTunes SVKS 1.1";
             // 
             // linkLabel1
             // 
@@ -101,10 +101,10 @@
             // 
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.richTextBox1.Location = new System.Drawing.Point(9, 124);
+            this.richTextBox1.Location = new System.Drawing.Point(9, 125);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(365, 176);
+            this.richTextBox1.Size = new System.Drawing.Size(365, 156);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -112,7 +112,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(383, 309);
+            this.ClientSize = new System.Drawing.Size(383, 290);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.linkLabel3);
             this.Controls.Add(this.linkLabel2);

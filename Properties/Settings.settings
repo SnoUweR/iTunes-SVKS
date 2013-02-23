@@ -3,7 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="messageToPost" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Привет! Рекомендую тебе послушать {name} - {artist}</Value>
+    </Setting>
+    <Setting Name="statusTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Сейчас прослушиваю {artist} - {name} via iTunes</Value>
     </Setting>
   </Settings>
 </SettingsFile>
