@@ -37,6 +37,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.supportMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkUpdatesToolStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.reauthContextMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.updateStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -54,7 +55,7 @@
             this.albumArtBox = new System.Windows.Forms.PictureBox();
             this.songArtistLabel = new System.Windows.Forms.Label();
             this.songNameLabel = new System.Windows.Forms.Label();
-            this.loadArtLastFM = new System.Windows.Forms.Button();
+            this.lastFMBtn = new System.Windows.Forms.Button();
             this.customText = new System.Windows.Forms.TextBox();
             this.autoUpdCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -80,7 +81,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.actionsStatus = new System.Windows.Forms.RichTextBox();
-            this.checkUpdatesToolStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -113,27 +113,27 @@
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
             this.mainToolStripMenuItem.Name = "mainToolStripMenuItem";
-            this.mainToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
+            this.mainToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.mainToolStripMenuItem.Text = "Меню";
             // 
             // reauthToolStripMenuItem
             // 
             this.reauthToolStripMenuItem.Name = "reauthToolStripMenuItem";
             this.reauthToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
-            this.reauthToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.reauthToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.reauthToolStripMenuItem.Text = "Перелогиниться";
             this.reauthToolStripMenuItem.Click += new System.EventHandler(this.reauthToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(204, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -142,15 +142,22 @@
             this.supportMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutMenuItem});
             this.supportMenuItem.Name = "supportMenuItem";
-            this.supportMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.supportMenuItem.Size = new System.Drawing.Size(64, 20);
             this.supportMenuItem.Text = "Справка";
             // 
             // aboutMenuItem
             // 
             this.aboutMenuItem.Name = "aboutMenuItem";
-            this.aboutMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.aboutMenuItem.Size = new System.Drawing.Size(153, 22);
             this.aboutMenuItem.Text = "О программе..";
             this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
+            // 
+            // checkUpdatesToolStripMenu
+            // 
+            this.checkUpdatesToolStripMenu.Name = "checkUpdatesToolStripMenu";
+            this.checkUpdatesToolStripMenu.Size = new System.Drawing.Size(147, 20);
+            this.checkUpdatesToolStripMenu.Text = "Проверить обновления";
+            this.checkUpdatesToolStripMenu.Click += new System.EventHandler(this.checkUpdatesToolStripMenu_Click);
             // 
             // reauthContextMenu
             // 
@@ -195,7 +202,7 @@
             // 
             this.iTunesStatus.ForeColor = System.Drawing.Color.Blue;
             this.iTunesStatus.Name = "iTunesStatus";
-            this.iTunesStatus.Size = new System.Drawing.Size(86, 17);
+            this.iTunesStatus.Size = new System.Drawing.Size(80, 17);
             this.iTunesStatus.Text = "Ищем iTunes..";
             // 
             // timer1
@@ -216,19 +223,19 @@
             this.toolStripMenuItem2,
             this.toolStripMenuItem3});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(191, 48);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(187, 48);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(190, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem2.Text = "Показать программу";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(190, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem3.Text = "Выйти";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.exitContextMenu_Click);
             // 
@@ -242,7 +249,7 @@
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.songArtistLabel);
             this.groupBox1.Controls.Add(this.songNameLabel);
-            this.groupBox1.Controls.Add(this.loadArtLastFM);
+            this.groupBox1.Controls.Add(this.lastFMBtn);
             this.groupBox1.Location = new System.Drawing.Point(12, 97);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(504, 213);
@@ -289,16 +296,16 @@
             this.songNameLabel.Text = "Нет композиции";
             this.songNameLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // loadArtLastFM
+            // lastFMBtn
             // 
-            this.loadArtLastFM.Enabled = false;
-            this.loadArtLastFM.Location = new System.Drawing.Point(335, 184);
-            this.loadArtLastFM.Name = "loadArtLastFM";
-            this.loadArtLastFM.Size = new System.Drawing.Size(165, 23);
-            this.loadArtLastFM.TabIndex = 29;
-            this.loadArtLastFM.Text = "Загрузить с LastFM";
-            this.loadArtLastFM.UseVisualStyleBackColor = true;
-            this.loadArtLastFM.Click += new System.EventHandler(this.loadArtLastFM_Click);
+            this.lastFMBtn.Enabled = false;
+            this.lastFMBtn.Location = new System.Drawing.Point(335, 184);
+            this.lastFMBtn.Name = "lastFMBtn";
+            this.lastFMBtn.Size = new System.Drawing.Size(165, 23);
+            this.lastFMBtn.TabIndex = 29;
+            this.lastFMBtn.Text = "Загрузить с LastFM";
+            this.lastFMBtn.UseVisualStyleBackColor = true;
+            this.lastFMBtn.Click += new System.EventHandler(this.lastFMBtn_Click);
             // 
             // customText
             // 
@@ -557,13 +564,6 @@
             this.actionsStatus.TabIndex = 31;
             this.actionsStatus.Text = "";
             // 
-            // checkUpdatesToolStripMenu
-            // 
-            this.checkUpdatesToolStripMenu.Name = "checkUpdatesToolStripMenu";
-            this.checkUpdatesToolStripMenu.Size = new System.Drawing.Size(149, 20);
-            this.checkUpdatesToolStripMenu.Text = "Проверить обновления";
-            this.checkUpdatesToolStripMenu.Click += new System.EventHandler(this.checkUpdatesToolStripMenu_Click);
-            // 
             // MainWnd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -653,7 +653,7 @@
         private System.Windows.Forms.PictureBox albumArtBox;
         private System.Windows.Forms.ComboBox comboBFriends;
         private System.Windows.Forms.Label songNameLabel;
-        private System.Windows.Forms.Button loadArtLastFM;
+        private System.Windows.Forms.Button lastFMBtn;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label songArtistLabel;
         private System.Windows.Forms.GroupBox groupBox3;

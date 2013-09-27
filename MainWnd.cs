@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
@@ -206,8 +207,6 @@ namespace iTunesSVKS
             else
             {
 
-                iTunesApp app = new iTunesAppClass(); // Регистрируем наш iTunes, как класс
-
                 // Пытаемся получить текущую композицию
                 try
                 {
@@ -368,22 +367,26 @@ namespace iTunesSVKS
             }
         }
 
-        private void SetOriginalStatus()
+
+        private delegate void LastFMBtnTextDelegate(string text);
+
+        private void LastFMBtnTextMethod(string text)
         {
-            try
-            {
-                _statusFactory.Set(_oldstatus);
-            }
-            catch (Exception e)
-            {
-                AddLineToConsole(e.Message);
-            }
+            lastFMBtn.Text = text;
+        }
+
+
+        private delegate void LastFMBtnEnabledDelegate(bool isEnabled);
+
+        private void LastFMBtnEnabledMethod(bool isEnabled)
+        {
+            lastFMBtn.Enabled = isEnabled;
         }
 
         private void GetCoverArtLastFM(string artist)
         {
-            loadArtLastFM.Text = "Идет поиск";
-            loadArtLastFM.Enabled = false;
+            lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Идет поиск");
+            lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
 
             StringBuilder buff = new StringBuilder();
             buff.Append("http://ws.audioscrobbler.com/2.0/");
@@ -411,11 +414,12 @@ namespace iTunesSVKS
                 imageUrl = (string)o.SelectToken("artist.image[4].#text");
                 if (imageUrl == "")
                 {
-                    loadArtLastFM.Text = "Обложка не найдена";
+                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Обложка не найдена");
                 }
                 else
                 {
-                    loadArtLastFM.Text = "Найдено";
+                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Найдена");
+                    lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
                     albumArtBox.ImageLocation = imageUrl;
                     WebClient webClient = new WebClient();
                     webClient.DownloadFile(imageUrl, String.Concat(Environment.CurrentDirectory, @"\ArtistCover.jpg"));
@@ -426,15 +430,15 @@ namespace iTunesSVKS
             {
 
                 AddLineToConsole(e.Message);
-                loadArtLastFM.Text = "Загрузить с LastFM";
-                loadArtLastFM.Enabled = true;
+                lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Загрузить с LastFM");
+                lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), true);
             }        
         }
 
         public void GetCurrentSong()
         {
             iTunesApp app = new iTunesAppClass();
-
+         
             try
             {
                 string artist = app.CurrentTrack.Artist;
@@ -444,8 +448,8 @@ namespace iTunesSVKS
 
                 if (_currentSong != currentSongLite)
                 {
-                    loadArtLastFM.Enabled = true;
-                    loadArtLastFM.Text = "Загрузить с LastFM";
+                    lastFMBtn.Enabled = true;
+                    lastFMBtn.Text = "Загрузить с LastFM";
                     _currentSong = currentSongLite;
                     GetAlbumArt();
                 }
@@ -706,13 +710,6 @@ namespace iTunesSVKS
             shareButton.Enabled = Properties.Settings.Default.messageToPost != null;
         }
 
-        private void loadArtLastFM_Click(object sender, EventArgs e)
-        {
-            //Thread t = new Thread(delegate() { GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist); });
-            //t.Start();
-            GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist);
-        }
-
         private void changeShareTextBtn_Click(object sender, EventArgs e)
         {
             Message m = new Message();
@@ -722,6 +719,14 @@ namespace iTunesSVKS
         private void checkUpdatesToolStripMenu_Click(object sender, EventArgs e)
         {
             CheckUpdates();
+        }
+
+        private void lastFMBtn_Click(object sender, EventArgs e)
+        {
+            Thread t = new Thread(delegate() { GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist); });
+            t.Start();
+
+            //GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist);
         }
     }
 }
