@@ -44,7 +44,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "iTunes SVKS 1.1";
+            this.label1.Text = "iTunes SVKS 1.2";
             // 
             // linkLabel1
             // 
