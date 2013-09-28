@@ -11,12 +11,15 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
+
 using ApiCore;
 using ApiCore.Friends;
 using ApiCore.Status;
 using ApiCore.Wall;
+using ApiCore.Audio;
+
 using Newtonsoft.Json.Linq;
-using iTunesLib; //Подключаем COM-библиотеку для работы с iTunes
+using iTunesLib;
 
 /*
  * iTunes SVKS (iTunes. Song to VK Status)
@@ -36,7 +39,8 @@ namespace iTunesSVKS
 {
     public partial class MainWnd : Form
     {
-        // Инициализация всех переменных
+        #region Переменные
+
         private const string AppTitle = "iTunes SVKS";
         private SessionInfo _sessionInfo;
         private ApiManager _manager;
@@ -54,11 +58,17 @@ namespace iTunesSVKS
         private StatusFactory _statusFactory;
         private WallFactory _wallFactory;
         private FriendsFactory _friendsFactory;
+        private AudioFactory _audioFactory;
 
         private List<Friend> _friendsList;
+        private List<AudioEntry> _audioList; 
         private int _friendId;
 
         private iTunesApp _iTunesAppCurrent;
+
+        //private static ManualResetEvent m_reset = new ManualResetEvent(false);
+
+        #endregion
 
         // Инициализация главного окна
         public MainWnd()
@@ -126,7 +136,7 @@ namespace iTunesSVKS
         // Событие при клике «Перелогиниться»
         private void reauthToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var sm = new SessionManager(2369574, "status,wall,photos");
+            var sm = new SessionManager(2369574, "status,wall,photos,audio");
             _sessionInfo = sm.ReLogin();
             _isLoggedIn = false;
             Reauth();
@@ -139,7 +149,7 @@ namespace iTunesSVKS
                 if (!_isLoggedIn)
                 {
                     // Соединяемся с VK API, передаем ему ключ приложения и необходимые нам разрешения
-                    var sm = new SessionManager(2369574, "status,wall,photos");
+                    var sm = new SessionManager(2369574, "status,wall,photos,audio");
                     _sessionInfo = sm.GetOAuthSession();
                     if (_sessionInfo != null)
                     {
@@ -455,15 +465,7 @@ namespace iTunesSVKS
                 }
 
 
-                // Если длина Lite-версии песни больше 64-х символов (максимум в notifyIcon), то показываем просто название композиции
-                if (currentSongLite.Length > 64)
-                {
-                    notifyIcon1.Text = name;
-                }
-                else
-                {
-                    notifyIcon1.Text = currentSongLite;
-                }
+                notifyIcon1.Text = currentSongLite.Length > 64 ? name : currentSongLite;
 
                 // Если длина статуса превышает максимально допустимую, по меркам VK.com, то просим пользователя отключить некоторые опции
                 if (textBox2.Text.Length > 131)
@@ -476,17 +478,29 @@ namespace iTunesSVKS
                 songNameLabel.Text = name;
                 songArtistLabel.Text = artist;
 
-                // Если чекбокс «Обновлять» активирован, то обновляем статус, выполняя функцию SetStatus()
                 if (autoUpdCheckBox.Checked)
                 {
                     SetStatus();
+                }
+                else if (realSongChckBox.Checked)
+                {
+                    FindSong(currentSongLite);
+                    if (_audioList.Count != 0)
+                    {
+                        _audioFactory = new AudioFactory(_manager);
+                        _audioFactory.SetBroadcast(_audioList[0].OwnerId + "_" + _audioList[0].Id);
+                    }
+                    else
+                    {
+                        SetStatus();
+                    }
+
                 }
             }
             catch (Exception e)
             {
                 AddLineToConsole(e.Message + ". Попробуйте перезапустить программу.");
                 //checkiTunes(); // На всякий случай проверяем, запущен ли iTunes
-                throw;
             }
 
             _iTunesAppCurrent = app;
@@ -727,6 +741,22 @@ namespace iTunesSVKS
             t.Start();
 
             //GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist);
+        }
+
+        private void realSongCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            setStatusButton.Enabled = realSongChckBox.Checked != true;
+            customText.Enabled = realSongChckBox.Checked != true;
+            textBox2.Enabled = realSongChckBox.Checked != true;
+            autoUpdCheckBox.Checked = realSongChckBox.Checked != true;
+            autoUpdCheckBox.Enabled = realSongChckBox.Checked != true;
+
+        }
+
+        private void FindSong(string name)
+        {
+            _audioFactory = new AudioFactory(_manager);
+            _audioList = _audioFactory.Search(name, AudioSortOrder.ByPopularity, false, 1, 0, true);
         }
     }
 }

@@ -81,6 +81,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.actionsStatus = new System.Windows.Forms.RichTextBox();
+            this.realSongChckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -313,7 +314,7 @@
             this.customText.Location = new System.Drawing.Point(6, 19);
             this.customText.Multiline = true;
             this.customText.Name = "customText";
-            this.customText.Size = new System.Drawing.Size(311, 46);
+            this.customText.Size = new System.Drawing.Size(311, 36);
             this.customText.TabIndex = 26;
             this.customText.Text = "Сейчас прослушиваю {artist} - {name} via iTunes";
             this.customText.TextChanged += new System.EventHandler(this.customText_TextChanged);
@@ -322,7 +323,7 @@
             // 
             this.autoUpdCheckBox.AutoSize = true;
             this.autoUpdCheckBox.Enabled = false;
-            this.autoUpdCheckBox.Location = new System.Drawing.Point(103, 121);
+            this.autoUpdCheckBox.Location = new System.Drawing.Point(6, 100);
             this.autoUpdCheckBox.Name = "autoUpdCheckBox";
             this.autoUpdCheckBox.Size = new System.Drawing.Size(104, 17);
             this.autoUpdCheckBox.TabIndex = 7;
@@ -401,7 +402,7 @@
             // setStatusButton
             // 
             this.setStatusButton.Enabled = false;
-            this.setStatusButton.Location = new System.Drawing.Point(213, 119);
+            this.setStatusButton.Location = new System.Drawing.Point(213, 96);
             this.setStatusButton.Name = "setStatusButton";
             this.setStatusButton.Size = new System.Drawing.Size(104, 23);
             this.setStatusButton.TabIndex = 4;
@@ -412,11 +413,11 @@
             // textBox2
             // 
             this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(6, 71);
+            this.textBox2.Location = new System.Drawing.Point(6, 61);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(311, 44);
+            this.textBox2.Size = new System.Drawing.Size(311, 33);
             this.textBox2.TabIndex = 14;
             // 
             // groupBox5
@@ -531,6 +532,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.realSongChckBox);
             this.groupBox2.Controls.Add(this.customText);
             this.groupBox2.Controls.Add(this.textBox2);
             this.groupBox2.Controls.Add(this.setStatusButton);
@@ -563,6 +565,17 @@
             this.actionsStatus.Size = new System.Drawing.Size(285, 91);
             this.actionsStatus.TabIndex = 31;
             this.actionsStatus.Text = "";
+            // 
+            // realSongChckBox
+            // 
+            this.realSongChckBox.AutoSize = true;
+            this.realSongChckBox.Location = new System.Drawing.Point(6, 123);
+            this.realSongChckBox.Name = "realSongChckBox";
+            this.realSongChckBox.Size = new System.Drawing.Size(267, 17);
+            this.realSongChckBox.TabIndex = 27;
+            this.realSongChckBox.Text = "Транслировать в статус реальную песню (Beta)";
+            this.realSongChckBox.UseVisualStyleBackColor = true;
+            this.realSongChckBox.CheckedChanged += new System.EventHandler(this.realSongCheckBox_CheckedChanged);
             // 
             // MainWnd
             // 
@@ -660,6 +673,7 @@
         private System.Windows.Forms.RichTextBox actionsStatus;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem checkUpdatesToolStripMenu;
+        private System.Windows.Forms.CheckBox realSongChckBox;
     }
 }
 
