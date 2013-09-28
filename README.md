@@ -39,5 +39,5 @@ Russian
 English
 -------
 
-The program allows you to receive information about listening to a song in iTunes and put his name in the your status on website VK.COM 
+The program allows you to receive information about current song in iTunes and put his information in  your status on VK.COM 
 
