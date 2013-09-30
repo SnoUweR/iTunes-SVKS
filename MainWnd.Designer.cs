@@ -79,9 +79,9 @@
             this.statusBoxCheck = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.realSongChckBox = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.actionsStatus = new System.Windows.Forms.RichTextBox();
-            this.realSongChckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -544,6 +544,17 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Шаблон";
             // 
+            // realSongChckBox
+            // 
+            this.realSongChckBox.AutoSize = true;
+            this.realSongChckBox.Location = new System.Drawing.Point(6, 123);
+            this.realSongChckBox.Name = "realSongChckBox";
+            this.realSongChckBox.Size = new System.Drawing.Size(267, 17);
+            this.realSongChckBox.TabIndex = 27;
+            this.realSongChckBox.Text = "Транслировать в статус реальную песню (Beta)";
+            this.realSongChckBox.UseVisualStyleBackColor = true;
+            this.realSongChckBox.CheckedChanged += new System.EventHandler(this.realSongCheckBox_CheckedChanged);
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.actionsStatus);
@@ -566,17 +577,6 @@
             this.actionsStatus.TabIndex = 31;
             this.actionsStatus.Text = "";
             // 
-            // realSongChckBox
-            // 
-            this.realSongChckBox.AutoSize = true;
-            this.realSongChckBox.Location = new System.Drawing.Point(6, 123);
-            this.realSongChckBox.Name = "realSongChckBox";
-            this.realSongChckBox.Size = new System.Drawing.Size(267, 17);
-            this.realSongChckBox.TabIndex = 27;
-            this.realSongChckBox.Text = "Транслировать в статус реальную песню (Beta)";
-            this.realSongChckBox.UseVisualStyleBackColor = true;
-            this.realSongChckBox.CheckedChanged += new System.EventHandler(this.realSongCheckBox_CheckedChanged);
-            // 
             // MainWnd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -596,7 +596,6 @@
             this.MaximizeBox = false;
             this.Name = "MainWnd";
             this.Text = "iTunes SVKS";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWnd_FormClosing);
             this.Shown += new System.EventHandler(this.MainWnd_Shown);
             this.Resize += new System.EventHandler(this.MainWnd_Resize);
             this.menuStrip1.ResumeLayout(false);

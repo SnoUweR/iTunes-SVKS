@@ -66,8 +66,6 @@ namespace iTunesSVKS
 
         private iTunesApp _iTunesAppCurrent;
 
-        //private static ManualResetEvent m_reset = new ManualResetEvent(false);
-
         #endregion
 
         // Инициализация главного окна
@@ -82,13 +80,29 @@ namespace iTunesSVKS
 
         }
 
-        // Событие при нажатии на «Выход»
+        #region Эвенты контролов
+
+        private void MainWnd_Shown(object sender, EventArgs e)
+        {
+            Text = AppTitle + ": Не авторизован!";
+            CheckUpdates();
+            Reauth();
+        }
+
+        private void MainWnd_Resize(object sender, EventArgs e)
+        {
+            if (FormWindowState.Minimized == WindowState)
+            {
+                Hide();
+                notifyIcon1.Visible = true;
+            }
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        // Событие при закрытии программы
         protected override void OnClosing(CancelEventArgs e)
         {
             try
@@ -114,7 +128,7 @@ namespace iTunesSVKS
                     {
                         // Возвращаем и завершаем программу
                         case DialogResult.Yes:
-                            _statusFactory.Set(_oldstatus); 
+                            _statusFactory.Set(_oldstatus);
                             break;
                         // Не завершаем программу
                         case DialogResult.Cancel:
@@ -129,11 +143,11 @@ namespace iTunesSVKS
             }
             catch (Exception)
             {
-                
+
             }
+
         }
 
-        // Событие при клике «Перелогиниться»
         private void reauthToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var sm = new SessionManager(2369574, "status,wall,photos,audio");
@@ -141,6 +155,143 @@ namespace iTunesSVKS
             _isLoggedIn = false;
             Reauth();
         }
+
+        // Выполняется при нажатии кнопки «Обновить»
+        private void setStatusButton_Click(object sender, EventArgs e)
+        {
+            SetStatus();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            GetCurrentSong();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Show(); // Показываем главное окно
+            notifyIcon1.Visible = false; // Скрываем иконку в трее
+            WindowState = FormWindowState.Normal; // Разворачиваем окно
+
+        }
+
+        private void checkiTunesTimer_Tick(object sender, EventArgs e)
+        {
+            CheckiTunes();
+        }
+
+        private void aboutMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowAboutBox();
+        }
+
+        private void reauthContextMenu_Click(object sender, EventArgs e)
+        {
+            Reauth();
+        }
+
+        private void exitContextMenu_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void autoUpdCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            setStatusButton.Enabled = autoUpdCheckBox.Checked != true;
+        }
+
+        private void updateStripMenu_Click(object sender, EventArgs e)
+        {
+            CheckiTunes();
+            SetStatus();
+        }
+
+        private void albumArtCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _coverArt = albumArtCheckBox.Checked;
+        }
+
+        private void shareButton_Click(object sender, EventArgs e)
+        {
+            Share(_friendId);
+        }
+
+        // Выполняется при нажатии «Поместить себе на страницу»
+        private void wallSongButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = _sessionInfo.UserId;
+                Share(id);
+
+            }
+            catch (ApiRequestErrorException apiRequestError)
+            {
+                AddLineToConsole(apiRequestError.Message + ". Сайт вернул неверный ответ. Попробуйте изменить текст для публикации.");
+            }
+            catch (Exception ex)
+            {
+                AddLineToConsole(ex.Message);
+            }
+        }
+
+        private void customText_TextChanged(object sender, EventArgs e)
+        {
+            textBox2.Text = ReplaceKeyWords(customText.Text);
+        }
+
+        // Щелчок в трее
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            Show();
+            notifyIcon1.Visible = false;
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void comboBFriends_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Friend a = comboBFriends.SelectedItem as Friend;
+            _friendId = a.Id;
+            shareButton.Enabled = Properties.Settings.Default.messageToPost != null;
+        }
+
+        private void changeShareTextBtn_Click(object sender, EventArgs e)
+        {
+            Message m = new Message();
+            m.ShowDialog();
+        }
+
+        private void checkUpdatesToolStripMenu_Click(object sender, EventArgs e)
+        {
+            CheckUpdates();
+        }
+
+        private void lastFMBtn_Click(object sender, EventArgs e)
+        {
+            if (lastFMBtn.Text == "Загрузить с LastFM")
+            {
+                Thread t = new Thread(delegate() { GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist, _iTunesAppCurrent.CurrentTrack.Name); });
+                t.Start();
+            }
+
+            else if (lastFMBtn.Text == "Сохранить в iTunes")
+            {
+                SaveAlbumArt();
+            }
+        }
+
+        private void realSongCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            customText.Enabled = realSongChckBox.Checked != true;
+            textBox2.Enabled = realSongChckBox.Checked != true;
+            setStatusButton.Enabled = realSongChckBox.Checked != true;
+            autoUpdCheckBox.Checked = realSongChckBox.Checked;
+            autoUpdCheckBox.Enabled = realSongChckBox.Checked != true;
+        }
+
+        #endregion
+
+        #region Функции программы
 
         private void Reauth()
         {
@@ -164,7 +315,7 @@ namespace iTunesSVKS
                     _manager = new ApiManager(_sessionInfo) { Timeout = 10000 };
                     Text = AppTitle + ": Авторизован!";
 
-                    checkiTunes();
+                    CheckiTunes();
                     GetStatus();
                     GetFriends();
                 }
@@ -175,31 +326,15 @@ namespace iTunesSVKS
             }
         }
 
-        private void MainWnd_Shown(object sender, EventArgs e)
+        public void CheckiTunes()
         {
-            Text = AppTitle + ": Не авторизован!";
-            CheckUpdates();
-            Reauth();
-        }
-
-        private void MainWnd_Resize(object sender, EventArgs e)
-        {
-            if (FormWindowState.Minimized == WindowState)
-            {
-                Hide(); // Скрываем главное окно
-                notifyIcon1.Visible = true; // Включаем иконку в трее
-            }
-        }
-
-        public void checkiTunes()
-        {
-            const string iTunesProcessName = "iTunes"; 
+            const string iTunesProcessName = "iTunes";
             Process[] iTunesProcess = Process.GetProcessesByName(iTunesProcessName); // Ищем процесс с iTunes
 
             // Выполняется, если iTunes.exe не запущен
             if (iTunesProcess.Length == 0)
             {
-                iTunesStatus.Text = "iTunes не запущен."; 
+                iTunesStatus.Text = "iTunes не запущен.";
                 iTunesStatus.ForeColor = Color.Red;
 
                 // Отключаем определенные кнопки и поля, которые не работают, при выключенном iTunes
@@ -211,7 +346,7 @@ namespace iTunesSVKS
                 wallSongButton.Enabled = false;
                 comboBFriends.Enabled = false;
                 checkiTunesTimer.Enabled = true;
-            } 
+            }
 
             // Выполняется если iTunes.exe запущен    
             else
@@ -256,22 +391,6 @@ namespace iTunesSVKS
                 }
             }
         }
-        
-        private void MainWnd_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // Заглушка
-        }
-
-        // Выполняется при нажатии кнопки «Установить»
-        private void setStatusButton_Click(object sender, EventArgs e)
-        {
-            SetStatus();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            GetCurrentSong();
-        }
 
         private void CheckUpdates()
         {
@@ -284,8 +403,8 @@ namespace iTunesSVKS
             try
             {
 
-                HttpWebRequest tokenRequest = (HttpWebRequest) WebRequest.Create(url);
-                HttpWebResponse tokenResponse = (HttpWebResponse) tokenRequest.GetResponse();
+                HttpWebRequest tokenRequest = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse tokenResponse = (HttpWebResponse)tokenRequest.GetResponse();
                 string tokenResult = new StreamReader(tokenResponse.GetResponseStream(), Encoding.UTF8).ReadToEnd();
 
                 XmlDocument doc = new XmlDocument();
@@ -295,7 +414,7 @@ namespace iTunesSVKS
                 Version actualVersion = new Version(XmlUtils.String("Version"));
                 _releaseNotes = XmlUtils.String("ReleaseNotes");
                 string downloadUrl = XmlUtils.String("URL");
-                
+
 
 
 
@@ -319,6 +438,135 @@ namespace iTunesSVKS
                 AddLineToConsole(e.Message);
             }
         }
+
+        private string SendCoverReqestLastFM(string method, string artist, string track)
+        {
+            StringBuilder buff = new StringBuilder();
+            buff.Append("http://ws.audioscrobbler.com/2.0/");
+            buff.Append("?method=");
+            buff.Append(method);
+            buff.Append("&api_key=");
+            buff.Append("e8203c02891d90390e16205aa05c1d6d");
+            buff.Append("&artist=");
+            buff.Append(artist);
+            buff.Append("&track=");
+            buff.Append(track);
+            buff.Append("&format=");
+            buff.Append("json");
+
+            Uri url = new Uri(buff.ToString());
+
+
+                HttpWebRequest tokenRequest = (HttpWebRequest) WebRequest.Create(url);
+                HttpWebResponse tokenResponse = (HttpWebResponse) tokenRequest.GetResponse();
+
+                string imageUrl = String.Empty;
+                string tokenResult = new StreamReader(tokenResponse.GetResponseStream(), Encoding.UTF8).ReadToEnd();
+
+                var o = JToken.Parse(tokenResult);
+
+                
+                imageUrl = (string) o.SelectToken("track.album.image[3].#text");
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    imageUrl = (string)o.SelectToken("artist.image[4].#text");
+                }
+
+                return imageUrl;
+
+        }
+
+        private void GetCoverArtLastFM(string artist, string track)
+        {
+            lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Идет поиск");
+            lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
+
+            try
+            {
+                string imageUrl = SendCoverReqestLastFM("track.getInfo", artist, track);
+
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    imageUrl = SendCoverReqestLastFM("artist.getInfo", artist, track);
+                }
+
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Обложка не найдена");
+                }
+                else
+                {
+                    //lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Найдена");
+                    //lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
+                    albumArtBox.ImageLocation = imageUrl;
+                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Сохранить в iTunes");
+                    lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), true);
+  
+                    WebClient webClient = new WebClient();
+                    webClient.DownloadFile(imageUrl, String.Concat(Environment.CurrentDirectory, @"\ArtistCover.jpg"));
+                    _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\ArtistCover.jpg");
+                }
+            }
+            catch (Exception e)
+            {
+
+                lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Загрузить с LastFM");
+                lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), true);
+            }
+        }
+
+        private void ShowAboutBox()
+        {
+            About a = new About();
+            a.ShowDialog();
+        }
+
+        private void AddLineToConsole(string message)
+        {
+            DateTime d = DateTime.Now;
+            actionsStatus.AppendText("[" + d.ToString("HH:mm:ss") + "] " + message + Environment.NewLine);
+            actionsStatus.ScrollToCaret();
+        }
+
+        private string ReplaceKeyWords(string originalString)
+        {
+            if (_isLoggedIn)
+            {
+                try
+                {
+                    iTunesApp app = new iTunesAppClass();
+                    string artist = app.CurrentTrack.Artist;
+                    string name = app.CurrentTrack.Name;
+                    string playlist = app.CurrentTrack.Playlist.Name;
+                    string album = app.CurrentTrack.Album;
+                    string genre = app.CurrentTrack.Genre;
+                    int count = app.CurrentTrack.PlayedCount;
+
+                    originalString = originalString.Replace("{name}", name);
+                    originalString = originalString.Replace("{artist}", artist);
+                    originalString = originalString.Replace("{playlist}", playlist);
+                    originalString = originalString.Replace("{count}", count.ToString());
+                    originalString = originalString.Replace("{album}", album);
+                    originalString = originalString.Replace("{genre}", genre);
+                }
+                catch (Exception e)
+                {
+                    AddLineToConsole(e.Message);
+                }
+            }
+
+            return originalString;
+        }
+
+        private void FindSong(string name)
+        {
+            _audioFactory = new AudioFactory(_manager);
+            _audioList = _audioFactory.Search(name, AudioSortOrder.ByPopularity, false, 1, 0, true);
+        }
+
+        #endregion
+
+        #region Функции VK API
 
         private void GetStatus()
         {
@@ -356,214 +604,6 @@ namespace iTunesSVKS
 
         }
 
-        private void GetAlbumArt()
-        {
-            try
-            {
-                iTunesApp app = new iTunesAppClass();
-                IITArtworkCollection art1 = app.CurrentTrack.Artwork;
-                IITArtwork art2 = art1[1];
-                art2.SaveArtworkToFile(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"));
-                Stream r = File.Open(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"), FileMode.Open);
-                Image temp = Image.FromStream(r);
-                r.Close();
-                albumArtBox.Image = temp;
-                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\Cover.jpg");
-            }
-            catch (Exception)
-            {
-                albumArtBox.Image = Properties.Resources.art;
-                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\No_Cover.jpg");
-            }
-        }
-
-
-        private delegate void LastFMBtnTextDelegate(string text);
-
-        private void LastFMBtnTextMethod(string text)
-        {
-            lastFMBtn.Text = text;
-        }
-
-
-        private delegate void LastFMBtnEnabledDelegate(bool isEnabled);
-
-        private void LastFMBtnEnabledMethod(bool isEnabled)
-        {
-            lastFMBtn.Enabled = isEnabled;
-        }
-
-        private void GetCoverArtLastFM(string artist)
-        {
-            lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Идет поиск");
-            lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
-
-            StringBuilder buff = new StringBuilder();
-            buff.Append("http://ws.audioscrobbler.com/2.0/");
-            buff.Append("?method=");
-            buff.Append("artist.getinfo");
-            buff.Append("&api_key=");
-            buff.Append("e8203c02891d90390e16205aa05c1d6d");
-            buff.Append("&artist=");
-            buff.Append(artist);
-            buff.Append("&format=");
-            buff.Append("json");
-
-            Uri url = new Uri(buff.ToString());
-
-            try
-            {
-                HttpWebRequest tokenRequest = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse tokenResponse = (HttpWebResponse)tokenRequest.GetResponse();
-
-                string imageUrl = String.Empty;
-                string tokenResult = new StreamReader(tokenResponse.GetResponseStream(), Encoding.UTF8).ReadToEnd();
-
-                var o = JToken.Parse(tokenResult);
-
-                imageUrl = (string)o.SelectToken("artist.image[4].#text");
-                if (imageUrl == "")
-                {
-                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Обложка не найдена");
-                }
-                else
-                {
-                    lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Найдена");
-                    lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), false);
-                    albumArtBox.ImageLocation = imageUrl;
-                    WebClient webClient = new WebClient();
-                    webClient.DownloadFile(imageUrl, String.Concat(Environment.CurrentDirectory, @"\ArtistCover.jpg"));
-                    _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\ArtistCover.jpg");
-                }
-            }
-            catch (Exception e)
-            {
-
-                AddLineToConsole(e.Message);
-                lastFMBtn.BeginInvoke(new LastFMBtnTextDelegate(LastFMBtnTextMethod), "Загрузить с LastFM");
-                lastFMBtn.BeginInvoke(new LastFMBtnEnabledDelegate(LastFMBtnEnabledMethod), true);
-            }        
-        }
-
-        public void GetCurrentSong()
-        {
-            iTunesApp app = new iTunesAppClass();
-         
-            try
-            {
-                string artist = app.CurrentTrack.Artist;
-                string name = app.CurrentTrack.Name;
-
-                string currentSongLite = String.Concat(artist, " - ", name);
-
-                if (_currentSong != currentSongLite)
-                {
-                    lastFMBtn.Enabled = true;
-                    lastFMBtn.Text = "Загрузить с LastFM";
-                    _currentSong = currentSongLite;
-                    GetAlbumArt();
-                }
-
-
-                notifyIcon1.Text = currentSongLite.Length > 64 ? name : currentSongLite;
-
-                // Если длина статуса превышает максимально допустимую, по меркам VK.com, то просим пользователя отключить некоторые опции
-                if (textBox2.Text.Length > 131)
-                {
-                    AddLineToConsole("Длина статуса превышает рекомендуемую. Макc. 130 знаков.");
-                    notifyIcon1.ShowBalloonTip(5, "Внимание!", "Статус превысил рекомендуемую длину.", ToolTipIcon.Warning);
-                }
-
-                textBox2.Text = ReplaceKeyWords(customText.Text);
-                songNameLabel.Text = name;
-                songArtistLabel.Text = artist;
-
-                if (autoUpdCheckBox.Checked)
-                {
-                    SetStatus();
-                }
-                else if (realSongChckBox.Checked)
-                {
-                    FindSong(currentSongLite);
-                    if (_audioList.Count != 0)
-                    {
-                        _audioFactory = new AudioFactory(_manager);
-                        _audioFactory.SetBroadcast(_audioList[0].OwnerId + "_" + _audioList[0].Id);
-                    }
-                    else
-                    {
-                        SetStatus();
-                    }
-
-                }
-            }
-            catch (Exception e)
-            {
-                AddLineToConsole(e.Message + ". Попробуйте перезапустить программу.");
-                //checkiTunes(); // На всякий случай проверяем, запущен ли iTunes
-            }
-
-            _iTunesAppCurrent = app;
-        }
-
-        private void AddLineToConsole(string message)
-        {
-            DateTime d = DateTime.Now;
-            actionsStatus.AppendText("[" + d.ToString("HH:mm:ss") + "] " + message + Environment.NewLine);
-            actionsStatus.ScrollToCaret();
-
-        }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            Show(); // Показываем главное окно
-            notifyIcon1.Visible = false; // Скрываем иконку в трее
-            WindowState = FormWindowState.Normal; // Разворачиваем окно
-            
-        }
-
-        private void checkiTunesTimer_Tick(object sender, EventArgs e)
-        {
-            checkiTunes();
-        }
-
-        private void aboutMenuItem_Click(object sender, EventArgs e)
-        {
-            ShowAboutBox();
-        }
-
-        private void ShowAboutBox()
-        {
-            About a = new About();
-            a.ShowDialog();
-        }
-
-        private void reauthContextMenu_Click(object sender, EventArgs e)
-        {
-            Reauth();
-        }
-
-        private void exitContextMenu_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void autoUpdCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            setStatusButton.Enabled = autoUpdCheckBox.Checked != true;
-        }
-
-        private void updateStripMenu_Click(object sender, EventArgs e)
-        {
-            checkiTunes();
-            SetStatus();
-        }
-
-        private void albumArtCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            _coverArt = albumArtCheckBox.Checked;
-        }
-
         private void GetFriends()
         {
 
@@ -578,36 +618,6 @@ namespace iTunesSVKS
             }
         }
 
-        private string ReplaceKeyWords(string originalString)
-        {
-            if (_isLoggedIn)
-            {
-                try
-                {
-                    iTunesApp app = new iTunesAppClass();
-                    string artist = app.CurrentTrack.Artist;
-                    string name = app.CurrentTrack.Name;
-                    string playlist = app.CurrentTrack.Playlist.Name;
-                    string album = app.CurrentTrack.Album;
-                    string genre = app.CurrentTrack.Genre;
-                    int count = app.CurrentTrack.PlayedCount;
-
-                    originalString = originalString.Replace("{name}", name);
-                    originalString = originalString.Replace("{artist}", artist);
-                    originalString = originalString.Replace("{playlist}", playlist);
-                    originalString = originalString.Replace("{count}", count.ToString());
-                    originalString = originalString.Replace("{album}", album);
-                    originalString = originalString.Replace("{genre}", genre);
-                }
-                catch (Exception e)
-                {
-                    AddLineToConsole(e.Message);
-                }
-            }
-
-            return originalString;
-        }
-
         /// <summary>
         /// Опубликовываем запись на стене с картинкой альбома
         /// </summary>
@@ -616,7 +626,7 @@ namespace iTunesSVKS
         {
 
             string shareText = ReplaceKeyWords(Properties.Settings.Default.messageToPost);
-                
+
             Console.WriteLine(shareText);
 
             _wallFactory = new WallFactory(_manager); // Инициализируем «фабрику» стены
@@ -680,23 +690,111 @@ namespace iTunesSVKS
             }
         }
 
-        private void shareButton_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Функции iTunes COM
+
+        public void GetCurrentSong()
         {
-            Share(_friendId);
+            iTunesApp app = new iTunesAppClass();
+
+            try
+            {
+                string artist = app.CurrentTrack.Artist;
+                string name = app.CurrentTrack.Name;
+
+                string currentSongLite = String.Concat(artist, " - ", name);
+
+                if (_currentSong != currentSongLite)
+                {
+                    lastFMBtn.Enabled = true;
+                    lastFMBtn.Text = "Загрузить с LastFM";
+                    _currentSong = currentSongLite;
+                    GetAlbumArt();
+                }
+
+
+                notifyIcon1.Text = currentSongLite.Length > 64 ? name : currentSongLite;
+
+                // Если длина статуса превышает максимально допустимую, по меркам VK.com, то просим пользователя отключить некоторые опции
+                if (textBox2.Text.Length > 131)
+                {
+                    AddLineToConsole("Длина статуса превышает рекомендуемую. Макc. 130 знаков.");
+                    notifyIcon1.ShowBalloonTip(5, "Внимание!", "Статус превысил рекомендуемую длину.", ToolTipIcon.Warning);
+                }
+
+                textBox2.Text = ReplaceKeyWords(customText.Text);
+                songNameLabel.Text = name;
+                songArtistLabel.Text = artist;
+
+                if (autoUpdCheckBox.Checked)
+                {
+                    SetStatus();
+                }
+                else if (realSongChckBox.Checked)
+                {
+                    FindSong(currentSongLite);
+                    if (_audioList.Count != 0)
+                    {
+                        _audioFactory = new AudioFactory(_manager);
+                        _audioFactory.SetBroadcast(_audioList[0].OwnerId + "_" + _audioList[0].Id);
+                    }
+                    else
+                    {
+                        SetStatus();
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                AddLineToConsole(e.Message + ". Попробуйте перезапустить программу.");
+                //checkiTunes(); // На всякий случай проверяем, запущен ли iTunes
+            }
+
+            _iTunesAppCurrent = app;
         }
 
-        // Выполняется при нажатии «Поместить себе на страницу»
-        private void wallSongButton_Click(object sender, EventArgs e)
+        private void GetAlbumArt()
         {
             try
             {
-                int id = _sessionInfo.UserId;
-                Share(id);
-
+                iTunesApp app = new iTunesAppClass();
+                IITArtworkCollection art1 = app.CurrentTrack.Artwork;
+                IITArtwork art2 = art1[1];
+                art2.SaveArtworkToFile(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"));
+                Stream r = File.Open(String.Concat(Environment.CurrentDirectory, @"\Cover.jpg"), FileMode.Open);
+                Image temp = Image.FromStream(r);
+                r.Close();
+                albumArtBox.Image = temp;
+                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\Cover.jpg");
             }
-            catch (ApiRequestErrorException apiRequestError)
+            catch (Exception)
             {
-                AddLineToConsole(apiRequestError.Message + ". Сайт вернул неверный ответ. Попробуйте изменить текст для публикации.");
+                albumArtBox.Image = Properties.Resources.art;
+                _imageDirectory = String.Concat(Environment.CurrentDirectory, @"\No_Cover.jpg");
+            }
+        }
+
+        private void SaveAlbumArt()
+        {
+            try
+            {
+                iTunesApp app = new iTunesAppClass();
+                var curTrack = app.CurrentTrack;
+                if (curTrack.Artwork[1] != null)
+                {
+                    curTrack.Artwork[1].SetArtworkFromFile(String.Concat(Environment.CurrentDirectory,
+                        @"\ArtistCover.jpg"));
+                }
+                else
+                {
+                    curTrack.AddArtworkFromFile(String.Concat(Environment.CurrentDirectory,
+                        @"\ArtistCover.jpg"));
+                }
+                lastFMBtn.Text = "Сохранено";
+                lastFMBtn.Enabled = false;
+
             }
             catch (Exception ex)
             {
@@ -704,59 +802,27 @@ namespace iTunesSVKS
             }
         }
 
-        private void customText_TextChanged(object sender, EventArgs e)
+        #endregion
+
+        #region Делегаты и методы
+
+        private delegate void LastFMBtnTextDelegate(string text);
+
+        private void LastFMBtnTextMethod(string text)
         {
-            textBox2.Text = ReplaceKeyWords(customText.Text);
+            lastFMBtn.Text = text;
         }
 
-        // Выполняется при попытке развернуть программу
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+
+        private delegate void LastFMBtnEnabledDelegate(bool isEnabled);
+
+        private void LastFMBtnEnabledMethod(bool isEnabled)
         {
-            Show();
-            notifyIcon1.Visible = false;
-            WindowState = FormWindowState.Normal;
+            lastFMBtn.Enabled = isEnabled;
         }
 
-        private void comboBFriends_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Friend a = comboBFriends.SelectedItem as Friend;
-            _friendId = a.Id;
-            shareButton.Enabled = Properties.Settings.Default.messageToPost != null;
-        }
 
-        private void changeShareTextBtn_Click(object sender, EventArgs e)
-        {
-            Message m = new Message();
-            m.ShowDialog();
-        }
+        #endregion
 
-        private void checkUpdatesToolStripMenu_Click(object sender, EventArgs e)
-        {
-            CheckUpdates();
-        }
-
-        private void lastFMBtn_Click(object sender, EventArgs e)
-        {
-            Thread t = new Thread(delegate() { GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist); });
-            t.Start();
-
-            //GetCoverArtLastFM(_iTunesAppCurrent.CurrentTrack.Artist);
-        }
-
-        private void realSongCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            setStatusButton.Enabled = realSongChckBox.Checked != true;
-            customText.Enabled = realSongChckBox.Checked != true;
-            textBox2.Enabled = realSongChckBox.Checked != true;
-            autoUpdCheckBox.Checked = realSongChckBox.Checked != true;
-            autoUpdCheckBox.Enabled = realSongChckBox.Checked != true;
-
-        }
-
-        private void FindSong(string name)
-        {
-            _audioFactory = new AudioFactory(_manager);
-            _audioList = _audioFactory.Search(name, AudioSortOrder.ByPopularity, false, 1, 0, true);
-        }
     }
 }
