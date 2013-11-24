@@ -50,6 +50,7 @@ namespace iTunesSVKS
         private string _currentstatus;
         private string _imageDirectory;
         private string _currentSong = "";
+        private string _oldSong = "";
         private string _releaseNotes = "";
 
         private bool _isLoggedIn;
@@ -604,6 +605,21 @@ namespace iTunesSVKS
 
         }
 
+        private void SetBroadcast()
+        {
+            try
+            {
+                _audioFactory = new AudioFactory(_manager);
+                _audioFactory.SetBroadcast(_audioList[0].OwnerId + "_" + _audioList[0].Id);
+                _oldSong = _currentSong;
+            }
+
+            catch (Exception e)
+            {
+                AddLineToConsole(e.Message);
+            }
+        }
+
         private void GetFriends()
         {
 
@@ -713,8 +729,7 @@ namespace iTunesSVKS
                     GetAlbumArt();
                 }
 
-
-                notifyIcon1.Text = currentSongLite.Length > 64 ? name : currentSongLite;
+                Fixes.SetNotifyIconText(notifyIcon1, currentSongLite);
 
                 // Если длина статуса превышает максимально допустимую, по меркам VK.com, то просим пользователя отключить некоторые опции
                 if (textBox2.Text.Length > 131)
@@ -727,23 +742,25 @@ namespace iTunesSVKS
                 songNameLabel.Text = name;
                 songArtistLabel.Text = artist;
 
-                if (autoUpdCheckBox.Checked)
+                if (autoUpdCheckBox.Checked && !realSongChckBox.Checked)
                 {
                     SetStatus();
                 }
                 else if (realSongChckBox.Checked)
                 {
-                    FindSong(currentSongLite);
-                    if (_audioList.Count != 0)
+                    if (currentSongLite != _oldSong)
                     {
-                        _audioFactory = new AudioFactory(_manager);
-                        _audioFactory.SetBroadcast(_audioList[0].OwnerId + "_" + _audioList[0].Id);
+                        FindSong(currentSongLite);
+                        if (_audioList.Count != 0)
+                        {
+                            SetBroadcast();
+                        }
+                        else
+                        {
+                            SetStatus();
+                        }
+                        _oldSong = currentSongLite;
                     }
-                    else
-                    {
-                        SetStatus();
-                    }
-
                 }
             }
             catch (Exception e)

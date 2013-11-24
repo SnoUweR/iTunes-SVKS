@@ -113,6 +113,7 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Fixes.cs" />
     <Compile Include="HttpUploaderFactory.cs" />
     <Compile Include="MainWnd.cs">
       <SubType>Form</SubType>
